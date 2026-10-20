@@ -1,0 +1,294 @@
+import catchAsync from "../../utils/catchAsync";
+import * as userServices from "./services/user.service"
+import * as doctorActionsServices from "./services/doctor/actions"
+import * as doctorGetServices from "./services/doctor/getForDoctor"
+import * as adminServices from "./services/admin.service"
+import { User } from "../../types/user";
+
+
+
+export const bookAppointment = catchAsync(async (req, res, next) => {
+
+    const user = req.user as User;
+
+    const appointment = await userServices.bookAppointment(user, req.body);
+
+    return res.status(201).json({
+        status: "success",
+        appointment,
+    })
+
+})
+
+export const getAllAppoinments = catchAsync(async (req, res, next) => {
+
+    const appointments = await adminServices.getAllAppoinments(req.query as { page?: string, limit?: string, search?: string, status?: string });
+
+    return res.status(200).json({
+        status: "success",
+        appointments: appointments.appointments,
+        results: appointments.results,
+        page: appointments.page,
+        totalPages: appointments.totalPages,
+        totalAppointments: appointments.totalAppointments
+    })
+})
+
+
+export const getActiveAppointment = catchAsync(async (req, res, next) => {
+
+    const user = req.user as User;
+
+    const appointment = await userServices.getActiveAppointment(user);
+
+    return res.status(200).json({
+        status: "success",
+        appointment: appointment === "empty" ? null : appointment
+    });
+
+})
+
+
+export const getAppointmentsRequestsForDoctor = catchAsync(async (req, res, next) => {
+
+    const user = req.user as User;
+
+    const appointments = await doctorGetServices.getAppointmentsRequestsForDoctor(user, req.params);
+
+    return res.status(200).json({
+        status: "success",
+        appointments: appointments.appointments,
+        results: appointments.results,
+        page: appointments.page,
+        totalPages: appointments.totalPages,
+        totalRequests: appointments.totalRequests,
+
+    })
+
+})
+
+
+export const getAppointmentDetails = catchAsync(async (req, res, next) => {
+
+    const { appointmentId } = req.params as { appointmentId: string };
+
+    const user = req.user as User;
+    let appointment = null;
+
+    if (user?.role == "USER" || user?.role == "ADMIN") {
+        appointment = await userServices.getAppointmentDetailsForUser(user, appointmentId);
+    } else {
+        appointment = await doctorGetServices.getAppointmentDetailsForDoctor(user, appointmentId);
+    }
+
+
+    return res.status(200).json({
+        status: "success",
+        appointment: {
+            ...appointment.appointment,
+            chatId: appointment.chat?.id
+        }
+    })
+
+})
+
+export const approveAppointment = catchAsync(async (req, res, next) => {
+
+    const doctor = req.user as User;
+    const { appointmentId } = req.params as { appointmentId: string };
+
+    const appointment = await doctorActionsServices.approveAppointment(doctor, appointmentId);
+
+    return res.status(201).json({
+        status: "success",
+        appointment,
+    })
+})
+
+export const rejectAppointment = catchAsync(async (req, res, next) => {
+
+    const doctor = req.user as User;
+    const { appointmentId } = req.params as { appointmentId: string };
+    const { rejectionReason } = req.body as { rejectionReason: string };
+
+    const appointment = await doctorActionsServices.rejectAppointment(doctor, appointmentId, rejectionReason);
+
+    return res.status(201).json({
+        status: "success",
+        appointment,
+    })
+})
+
+
+export const getPrevAppoinments = catchAsync(async (req, res, next) => {
+
+    const user = req.user;
+
+    const appointments = await userServices.getPrevAppointments(user);
+
+    return res.status(200).json({
+        status: "success",
+        appointments,
+    })
+
+})
+
+export const cancelAppointmentByUser = catchAsync(async (req, res, next) => {
+    const { appointmentId } = req.params;
+    const { reason } = req.body;
+    const user = req.user as User;
+    await userServices.cancelAppointmentByUser(user, appointmentId as string, reason as string);
+    return res.status(200).json({
+        status: "success",
+    })
+})
+
+export const cancelAppointmentByDoctor = catchAsync(async (req, res, next) => {
+    const { appointmentId } = req.params;
+    const { rejectionReason } = req.body;
+    const doctor = req.user as User;
+    await doctorActionsServices.cancelAppointmentByDoctor(doctor, appointmentId as string, rejectionReason as string);
+    return res.status(200).json({
+        status: "success",
+    })
+})
+
+
+export const endAppoinment = catchAsync(async (req, res, next) => {
+
+    const doctor = req.user as User;
+    const files = req.files
+    const { appointmentId } = req.params as { appointmentId: string };
+    const { medicalRecord, vaccination, upCommingVaccination, chatExpiryDays } = req.body;
+
+    await doctorActionsServices.endAppointment(doctor, appointmentId, medicalRecord, vaccination, upCommingVaccination, files, chatExpiryDays);
+
+    return res.status(201).json({
+        status: "success",
+    })
+})
+
+export const changeAppoinmentStatus = catchAsync(async (req, res, next) => {
+
+    const { appointmentId } = req.params as { appointmentId: string };
+    const { status } = req.body;
+    await adminServices.changeAppointmentStatus(appointmentId, status);
+
+    return res.status(200).json({
+        status: "success",
+    })
+})
+
+export const getAppoinmentDetailsForAdmin = catchAsync(async (req, res, next) => {
+    const { appointmentId } = req.params as { appointmentId: string };
+
+    const appointment = await adminServices.getAppointmentDetailsForAdmin(appointmentId);
+    return res.status(200).json({
+        status: "success",
+        appointment,
+    })
+})
+
+
+export const prevAppointmentsForDoctor = catchAsync(async (req, res, next) => {
+    const doctor = req.user as User;
+    const appointments = await doctorGetServices.prevAppointmentsForDoctor(doctor);
+
+    return res.status(200).json({
+        status: "success",
+        appointments: appointments.appointments,
+        appoinmentsCounts: appointments.appoinmentsCounts,
+        doctorRating: appointments.doctorRating,
+        wallet: appointments.wallet,
+        totalEarnings: appointments.totalEarnings,
+    })
+})
+
+export const getWalletTransactions = catchAsync(async (req, res, next) => {
+    const doctor = req.user as User;
+    const transactions = await doctorGetServices.getWalletTransactions(doctor);
+    return res.status(200).json({
+        status: "success",
+        transactions: transactions,
+    })
+})
+
+export const activeAppoinmentsForDoctor = catchAsync(async (req, res, next) => {
+    const doctor = req.user as User;
+    const { date } = req.query;
+
+    const appointments = await doctorGetServices.getActiveAppoinmentsForDoctor(doctor, date);
+
+    return res.status(200).json({
+        status: "success",
+        appointments: appointments
+    })
+
+})
+
+export const checkPendingReview = catchAsync(async (req, res, next) => {
+    const user = req.user as User;
+    const pendingReview = await userServices.checkPendingReview(user);
+    return res.status(200).json({
+        status: "success",
+        pendingReview: pendingReview === "empty" ? null : pendingReview
+    })
+
+})
+
+export const addReview = catchAsync(async (req, res, next) => {
+    const { appointmentId } = req.params as { appointmentId: string };
+    const { rate, comment } = req.body;
+    const user = req.user as User;
+    await userServices.addReview(user, appointmentId, rate, comment);
+    return res.status(200).json({
+        status: "success",
+    })
+})
+
+export const skipAppointmentReview = catchAsync(async (req, res, next) => {
+    const { appointmentId } = req.params as { appointmentId: string };
+    const user = req.user as User;
+    await userServices.skipAppointmentReview(user, appointmentId);
+    return res.status(200).json({
+        status: "success",
+    })
+})
+
+
+export const editAppointmentTime = catchAsync(async (req, res, next) => {
+    const { appointmentId } = req.params as { appointmentId: string };
+    const { date, time } = req.body;
+    const user = req.user as User;
+    await userServices.editAppointmentTime(user, appointmentId, date, time);
+
+    return res.status(200).json({
+        status: "success",
+    })
+
+})
+
+export const previewAppointment = catchAsync(async (req, res, next) => {
+    const { doctor, date, time, pet, promoCode } = req.body;
+    const user = req.user as User;
+    const appointment = await userServices.previewAppointmentPricing(user, doctor, date, time, pet, promoCode);
+    return res.status(200).json({
+        status: "success",
+        doctor: { name: appointment.doctorResult.name },
+        pet: { name: appointment.petResult.name },
+        date: appointment.date,
+        time: appointment.time,
+
+        originalFee: appointment.doctorFee,
+        discount: appointment.discount,
+        appointmentFee: appointment.appointmentFee,
+        discountDetails: {
+            name: appointment.discountDetails?.discount.name ?? null,
+            type: appointment.discountDetails?.discount.type ?? null,
+            value: appointment.discountDetails ? Number(appointment.discountDetails.discount.value) : null,
+            amountSaved: appointment.discountDetails?.amountSaved ?? null,
+        },
+        serviceFee: appointment.serviceFee,            // 50
+        totalPaid: appointment.totalPaid,               // 400
+    });
+})

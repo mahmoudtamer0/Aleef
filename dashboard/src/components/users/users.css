@@ -1,0 +1,95 @@
+.om-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.om-badge--active {
+    background: #d1e7dd;
+    color: #0a3622;
+}
+
+.om-badge--banned {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.om-btn-danger {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    background: #ef4444;
+    color: white;
+}
+
+.om-btn-danger:hover {
+    opacity: 0.9;
+}
+
+.om-btn-success {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    background: #10b981;
+    color: white;
+}
+
+.om-btn-success:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+
+    .om-table-card,
+    .appointments-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .om-table,
+    .appointments-table {
+        min-width: 650px;
+    }
+
+    .om-table th:nth-child(3),
+    .om-table td:nth-child(3),
+    .om-table th:nth-child(4),
+    .om-table td:nth-child(4) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .om-page {
+        padding: 0 !important;
+        margin: 0;
+    }
+
+    .container {
+        width: 100% !important;
+        padding: 16px !important;
+        margin: 0 !important;
+        position: static;
+    }
+
+    .om-table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    .om-table {
+        min-width: 600px;
+    }
+}

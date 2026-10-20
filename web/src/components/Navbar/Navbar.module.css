@@ -1,0 +1,38 @@
+@keyframes ring {
+  0%, 90%, 100% { transform: rotate(0); }
+  93% { transform: rotate(14deg); }
+  96% { transform: rotate(-12deg); }
+}
+
+.header { position: sticky; top: 0; z-index: 30; background: rgba(243, 249, 248, 0.85); backdrop-filter: blur(8px); }
+.inner { display: flex; align-items: center; gap: 24px; height: 64px; }
+.logo { font-size: 24px; font-weight: 800; letter-spacing: 0.28em; color: var(--brand-600); }
+
+.links { display: none; flex: 1; gap: 28px; }
+.link { display: inline-flex; align-items: center; gap: 8px; padding-bottom: 6px; border-bottom: 3px solid transparent; font-size: 15px; font-weight: 600; color: #3f5e58; }
+.link:hover { color: var(--brand-600); }
+.linkActive { border-bottom-color: var(--brand-500); color: var(--brand-600); }
+
+.right { display: flex; flex: 1; align-items: center; justify-content: flex-end; gap: 10px; }
+.search { display: none; align-items: center; gap: 10px; width: 256px; height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--muted); font-size: 14px; }
+.searchInput { width: 100%; border: 0; outline: none; background: transparent; }
+.searchInput::placeholder { color: var(--muted); }
+.iconButton { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--brand-600); }
+@keyframes badgePop { 0% { transform: scale(0.4); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.badge { position: absolute; top: -6px; right: -6px; display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border: 2px solid var(--surface); border-radius: 999px; background: #f2803a; color: #fff; font-size: 11px; font-weight: 800; animation: badgePop 0.3s ease-out; }
+.linkBadge { display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: linear-gradient(135deg, #ffb34d, #f2803a); color: #3a1b05; font-size: 11px; font-weight: 800; animation: badgePop 0.3s ease-out; }
+.tabBadge { position: absolute; top: 2px; right: 2px; display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border: 2px solid #fff; border-radius: 999px; background: #f2803a; color: #fff; font-size: 10px; font-weight: 800; animation: badgePop 0.3s ease-out; }
+.bell { animation: ring 5s infinite; transform-origin: 50% 10%; }
+
+/* phone: bottom tab bar, like the mobile app */
+.tabs { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 30; display: flex; justify-content: space-around; padding: 8px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 255, 255, 0.95); box-shadow: var(--shadow-lift); backdrop-filter: blur(8px); }
+.tab { position: relative; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; color: var(--brand-600); }
+.tabActive { background: var(--brand-600); color: #fff; }
+
+@media (min-width: 768px) {
+  .links { display: flex; }
+  .right { flex: none; }
+  .tabs { display: none; }
+}
+@media (min-width: 992px) { .inner { gap: 36px; } }
+@media (min-width: 1200px) { .search { display: flex; } }

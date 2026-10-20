@@ -1,0 +1,382 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+    /* background: #f0f4f3; */
+    min-height: 100vh;
+}
+
+:root {
+    --sidebar-w: 220px;
+    --sidebar-collapsed-w: 64px;
+    --bg-item-hover: rgba(45, 157, 143, 0.08);
+    --bg-item-active: #2d9d8f;
+    --text: #4a6a65;
+    /* ← نص داكن بدل الفاتح */
+    --text-muted: #9ab5b0;
+    --text-active: #ffffff;
+    --logo-color: #1a3a3a;
+    /* ← لون logo داكن */
+    --badge-bg: #e05c5c;
+    --badge-text: #fff;
+    --border: rgba(0, 0, 0, 0.07);
+    /* ← border خفيف للخلفية البيضاء */
+    --transition: 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 199;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity var(--transition);
+    pointer-events: none;
+}
+
+.overlay.show {
+    display: block;
+    pointer-events: all;
+    opacity: 1;
+}
+
+
+.hamburger {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 210;
+    background: var(--bg-item-active);
+    border: none;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+    transition: background var(--transition);
+}
+
+.hamburger:hover {
+    background: #249189;
+}
+
+/* ══════════════════════════════════════
+       SIDEBAR SHELL
+    ══════════════════════════════════════ */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-w);
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    overflow: hidden;
+    transition: width var(--transition);
+    background: #ffffff;
+    box-shadow: 2px 0 18px rgba(0, 0, 0, 0.06);
+}
+
+/* Collapsed state */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-w);
+}
+
+/* ══════════════════════════════════════
+       LOGO ROW
+    ══════════════════════════════════════ */
+.sidebar__logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow: hidden;
+    color: var(--bg-item-active);
+}
+
+.sidebar.collapsed .sidebar__logo {
+    justify-content: center;
+    padding: 0;
+}
+
+.sidebar__logo-text {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: var(--bg-item-active);
+    white-space: nowrap;
+    transition: opacity var(--transition), width var(--transition);
+}
+
+.sidebar.collapsed .sidebar__logo-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.sidebar__toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+}
+
+.sidebar__toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.sidebar.collapsed .sidebar__toggle {
+    transform: rotate(180deg);
+}
+
+/* ══════════════════════════════════════
+       NAV LIST
+    ══════════════════════════════════════ */
+.sidebar__nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+.sidebar__nav::-webkit-scrollbar {
+    width: 3px;
+}
+
+.sidebar__nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+}
+
+.sidebar__nav ul {
+    list-style: none;
+    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Each Nav Item ── */
+.nav-item {
+    width: 100%;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 10px;
+    border: none;
+    background: none;
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    transition: background var(--transition), color var(--transition), padding-left var(--transition);
+}
+
+.nav-link:hover {
+    background: rgba(45, 157, 143, 0.08);
+    color: #2d9d8f;
+    padding-left: 14px;
+    /* ← shift بسيط للـ text */
+}
+
+
+
+.nav-link.active {
+    background: var(--bg-item-active);
+    color: var(--text-active);
+    font-weight: 600;
+}
+
+.nav-link.active:hover {
+    background: #279189;
+}
+
+/* Collapsed: center icons */
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 10px;
+}
+
+/* ── Icon ── */
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ── Label ── */
+.nav-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity var(--transition), width var(--transition);
+}
+
+.sidebar.collapsed .nav-label {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+/* ── Badge ── */
+.nav-badge {
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 20px;
+    line-height: 1.4;
+    flex-shrink: 0;
+    transition: opacity var(--transition);
+}
+
+.sidebar.collapsed .nav-badge {
+    /* collapsed: dot badge */
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+/* ── Tooltip on hover when collapsed ── */
+.nav-link[data-tooltip] {
+    position: relative;
+}
+
+.sidebar.collapsed .nav-link[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #0f2220;
+    color: #e0f0ee;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 300;
+}
+
+.sidebar.collapsed .nav-link[data-tooltip]:hover::after {
+    opacity: 1;
+}
+
+.content {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+    transition: margin-left var(--transition);
+    padding-top: 60px;
+}
+
+.sidebar.collapsed~.content {
+    margin-left: var(--sidebar-collapsed-w);
+}
+
+/* ← ده المهم */
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0 !important;
+        padding-top: 64px;
+    }
+}
+
+.demo-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px 40px;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+}
+
+.demo-card h2 {
+    font-size: 22px;
+    color: #1a2e2e;
+    margin-bottom: 6px;
+}
+
+.demo-card p {
+    font-size: 14px;
+    color: #8a9fb0;
+}
+
+/* ══════════════════════════════════════
+       RESPONSIVE — MOBILE
+    ══════════════════════════════════════ */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .sidebar {
+        width: var(--sidebar-w) !important;
+        /* always full width on mobile */
+        transform: translateX(-100%);
+        transition: transform var(--transition);
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0 !important;
+        padding: 16px;
+        padding-top: 64px;
+    }
+
+    /* hide desktop toggle on mobile */
+    .sidebar__toggle {
+        display: none;
+    }
+}

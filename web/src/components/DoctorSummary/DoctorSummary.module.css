@@ -1,0 +1,9 @@
+.card { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-card); }
+.photo { width: 76px; height: 76px; border-radius: 22px; }
+.info { flex: 1; min-width: 200px; }
+.name { font-size: 20px; font-weight: 800; }
+.meta { font-size: 14px; color: var(--muted); }
+.rating { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-weight: 700; color: var(--brand-600); }
+.fee { text-align: right; }
+.feeLabel { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); }
+.feeValue { font-size: 24px; font-weight: 800; color: var(--brand-600); }

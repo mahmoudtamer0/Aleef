@@ -1,0 +1,10 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.pet { display: flex; align-items: center; gap: 12px; padding: 12px; border: 2px solid var(--line); border-radius: 20px; background: #fff; text-align: left; transition: border-color 0.2s, background 0.2s; }
+.pet:hover { background: var(--brand-50); }
+.on { border-color: var(--brand-600); background: var(--brand-50); }
+.photo { width: 52px; height: 52px; border-radius: 16px; }
+.text { flex: 1; min-width: 0; }
+.name { display: block; }
+.meta { font-size: 13px; color: var(--muted); }
+.check { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--brand-600); color: #fff; }
+.empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); }

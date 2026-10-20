@@ -1,0 +1,11 @@
+@keyframes pop { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+.dialog { width: min(460px, calc(100% - 32px)); padding: 0; border: 0; border-radius: 28px; background: #fff; color: var(--ink); box-shadow: 0 30px 80px rgba(16, 48, 43, 0.35); }
+.dialog[open] { animation: pop 0.25s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.dialog::backdrop { background: rgba(16, 48, 43, 0.45); backdrop-filter: blur(2px); }
+.content { padding: 28px; }
+.icon { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 14px; border-radius: 50%; background: #ffe1dd; color: #b3261e; }
+.title { font-size: 22px; font-weight: 800; }
+.text { margin-top: 6px; color: var(--muted); }
+.error { margin-top: 14px; font-size: 14px; color: #8e2018; }
+.actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 22px; }

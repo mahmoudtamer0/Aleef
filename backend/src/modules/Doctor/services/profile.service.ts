@@ -1,0 +1,422 @@
+import { getCache, setCache, clearCache } from "../../../cache";
+import pool from "../../../db";
+import { User } from "../../../types/user";
+import ApiError from "../../../utils/ApiError";
+import cloudinary from "../../../utils/cloudinary";
+import { getNextDays } from "../../../utils/getDoctorAvailableDays";
+import { getAvailableSlots } from "../../../utils/getDoctorAvailableSlots";
+import { applyDiscountToFee, findUserActiveDiscount } from "../../discounts/discounts.services";
+
+export const getDoctorSchedual = async (doctorId: string): Promise<any> => {
+
+    const cacheKey = `doctor_schedual:${doctorId}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
+    const doctorResult = await pool.query(
+        `SELECT id, name, specialization, city, address, "profilePic", 
+                rating, "ratingsCount", "appointmentFee", "slotduration"
+         FROM doctors WHERE id = $1 AND status = 'active'`,
+        [doctorId]
+    );
+
+    if (!doctorResult.rows.length) throw new ApiError(404, "Doctor not found");
+    const doctor = doctorResult.rows[0];
+
+    const { result: doctorDays, scheduleMap } = await getNextDays(doctorId);
+
+    let firstDaySlots: string[] = [];
+    if (doctorDays.length > 0) {
+        firstDaySlots = await getAvailableSlots(doctorId, doctorDays[0].date, scheduleMap, doctor.slotduration);
+    }
+
+    const response = {
+        doctor: {
+            name: doctor.name,
+            specialization: doctor.specialization,
+            city: doctor.city,
+            address: doctor.address,
+            profilePic: doctor.profilePic,
+            rating: doctor.rating,
+            ratingsCount: doctor.ratingsCount,
+            appointmentFee: doctor.appointmentFee,
+        },
+        doctorDays,
+        firstDaySlots,
+    }
+
+    setCache(cacheKey, response, 800);
+
+    return response;
+};
+
+
+export const getDoctorSlots = async (doctorId: string, date: string): Promise<any> => {
+
+    const cacheKey = `doctor_slots_${doctorId}:${date}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
+    const doctorResult = await pool.query(
+        `SELECT id, "slotduration" FROM doctors WHERE id = $1 AND status = 'active'`,
+        [doctorId]
+    );
+
+    if (!doctorResult.rows.length) throw new ApiError(404, "Doctor not found");
+
+    const workingHours = await pool.query(
+        `SELECT day_of_week, start_time, end_time, is_available 
+         FROM doctor_schedules 
+         WHERE doctor_id = $1`,
+        [doctorId]
+    );
+
+    const scheduleMap: Record<string, any> = {};
+    for (const row of workingHours.rows) {
+        scheduleMap[row.day_of_week.toLowerCase()] = row;
+    }
+
+    const slots = await getAvailableSlots(
+        doctorId,
+        date,
+        scheduleMap,
+        doctorResult.rows[0].slotduration
+    );
+
+    const response = { date, slots };
+
+    setCache(cacheKey, response, 500);
+
+    return response;
+};
+
+export const editDoctor = async (doctor: User, body: { name: string, phone: string, specialization: string, city: string, address: string, about: string, appointmentFee: string, slotduration: string }, reqFile: any) => {
+
+    const { name, phone, specialization, city, address, about, appointmentFee, slotduration } = body;
+
+    const fields: any[] = [];
+    const params: any[] = [];
+    let paramIndex = 1;
+
+    if (name) { fields.push(`name = $${paramIndex}`); params.push(name); paramIndex++; }
+    if (phone) { fields.push(`phone = $${paramIndex}`); params.push(phone); paramIndex++; }
+    if (city) { fields.push(`city = $${paramIndex}`); params.push(city); paramIndex++; }
+    if (address) { fields.push(`address = $${paramIndex}`); params.push(address); paramIndex++; }
+    if (specialization) { fields.push(`specialization = $${paramIndex}`); params.push(specialization); paramIndex++; }
+    if (appointmentFee) { fields.push(`"appointmentFee" = $${paramIndex}`); params.push(Number(appointmentFee)); paramIndex++; }
+    if (about) { fields.push(`about = $${paramIndex}`); params.push(about); paramIndex++; }
+    if (slotduration) { fields.push(`slotduration = $${paramIndex}`); params.push(slotduration); paramIndex++; }
+
+    if (reqFile) {
+        fields.push(`"profilePic" = $${paramIndex}`); params.push(reqFile.path); paramIndex++;
+        fields.push(`cloudinary_id = $${paramIndex}`); params.push(reqFile.filename); paramIndex++;
+    }
+
+    if (fields.length === 0) throw new ApiError(400, "No fields to update");
+
+    fields.push(`"updatedAt" = NOW()`);
+    params.push(doctor.id);
+
+    const oldProfileResult = await pool.query(
+        `SELECT cloudinary_id FROM doctors WHERE id = $1`,
+        [doctor.id]
+    );
+
+    const result = await pool.query(`
+        UPDATE doctors 
+        SET ${fields.join(", ")} 
+        WHERE id = $${paramIndex}
+        RETURNING id,name,email,phone,"profilePic"
+    `, params);
+
+    if (result.rowCount === 0) throw new ApiError(404, "Doctor not found");
+
+    clearCache(`me_doctor:${doctor.id}`)
+    clearCache(`doctor_details:${doctor.id}`)
+    clearCache(`doctorsAvailable:${doctor.id}`)
+    clearCache(`doctor_schedual:${doctor.id}`)
+
+
+
+    if (reqFile && oldProfileResult.rows[0]?.cloudinary_id && oldProfileResult.rows[0].cloudinary_id !== "default") {
+        setImmediate(async () => {
+            await cloudinary.uploader.destroy(oldProfileResult.rows[0].cloudinary_id);
+        });
+    }
+
+    return result.rows[0];
+
+}
+
+export const getDoctorScheduleForDoctor = async (doctor: User) => {
+    const cacheKey = `doctor_me_schedual:${doctor.id}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
+    const result = await pool.query(
+        `SELECT id, day_of_week, start_time, end_time, is_available
+         FROM doctor_schedules
+         WHERE doctor_id = $1
+         ORDER BY CASE day_of_week
+             WHEN 'sunday' THEN 1
+             WHEN 'monday' THEN 2
+             WHEN 'tuesday' THEN 3
+             WHEN 'wednesday' THEN 4
+             WHEN 'thursday' THEN 5
+             WHEN 'friday' THEN 6
+             WHEN 'saturday' THEN 7
+         END`,
+        [doctor.id]
+    );
+
+    setCache(cacheKey, result.rows, 300);
+    return result.rows;
+};
+
+
+export const editDoctorSchedule = async (doctor: User, schedule: { day_of_week: string, start_time: string, end_time: string, is_available: boolean }[]) => {
+
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        const newSchedule: any[] = [];
+
+        for (const day of schedule) {
+            const dayResult = await client.query(
+                `INSERT INTO doctor_schedules (doctor_id, day_of_week, start_time, end_time, is_available)
+                 VALUES ($1, $2, $3, $4, $5)
+                 ON CONFLICT (doctor_id, day_of_week) DO UPDATE SET
+                    start_time = $3,
+                    end_time = $4,
+                    is_available = $5 RETURNING id,day_of_week,start_time,end_time,is_available`,
+                [doctor.id, day.day_of_week.toLowerCase(), day.start_time, day.end_time, day.is_available]
+            );
+
+            newSchedule.push(dayResult.rows[0]);
+        }
+
+        await client.query("COMMIT");
+
+        clearCache(`doctor_schedual:${doctor.id}`);
+        clearCache(`doctor_me_schedual:${doctor.id}`);
+        clearCache(`doctor_slots_${doctor.id}:`);
+
+        return newSchedule;
+
+    } catch (err) {
+        await client.query("ROLLBACK");
+        throw err;
+    } finally {
+        client.release();
+    }
+
+
+};
+
+function roundForCacheKey(value: number | null): string {
+    if (value === null) return "none";
+    return value.toFixed(2);
+}
+
+export const getAvailableDoctors = async (reqQuery: {
+    search?: string, status?: string, sort?: string,
+    page?: string, limit?: string,
+    user_lat?: string, user_lng?: string,
+    city?: string
+}, userId: string | null) => {
+
+    const { search, status, sort, city } = reqQuery;
+    const user_lat = reqQuery.user_lat ? parseFloat(reqQuery.user_lat) : null;
+    const user_lng = reqQuery.user_lng ? parseFloat(reqQuery.user_lng) : null;
+
+    const page = Number(reqQuery.page) || 1;
+    const limit = Math.min(Number(reqQuery.limit) || 10, 5);
+    const offset = (page - 1) * limit;
+
+    const cacheKey = `doctorsAvailable:${page}_${limit}_${sort}_${status}_${search}_${city}_${roundForCacheKey(user_lat)}_${roundForCacheKey(user_lng)}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
+    const filters: string[] = [];
+    const params: any[] = [];
+    let paramIndex = 1;
+
+    let distanceSelect = `NULL AS distance_km`;
+    const hasLocation = user_lat !== null && user_lng !== null;
+
+    if (hasLocation) {
+        distanceSelect = `
+            ROUND(CAST(
+                6371 * acos(
+                    cos(radians($${paramIndex})) * cos(radians(d.lat)) *
+                    cos(radians(d.lng) - radians($${paramIndex + 1})) +
+                    sin(radians($${paramIndex})) * sin(radians(d.lat))
+                )
+            AS numeric), 2) AS distance_km
+        `;
+        params.push(user_lat, user_lng);
+        paramIndex += 2;
+    }
+
+    if (search && search !== "") {
+        filters.push(`(
+            d.name ILIKE $${paramIndex} OR 
+            d.email ILIKE $${paramIndex} OR 
+            d.phone ILIKE $${paramIndex} OR 
+            d.city ILIKE $${paramIndex} OR 
+            d.specialization ILIKE $${paramIndex}
+        )`);
+        params.push(`%${search}%`);
+        paramIndex++;
+    }
+
+    if (city && city !== "") {
+        filters.push(`d.city ILIKE $${paramIndex}`);
+        params.push(city);
+        paramIndex++;
+    }
+
+    const whereClause = filters.length > 0
+        ? `WHERE ${filters.join(" AND ")} AND d.status = 'active'`
+        : `WHERE d.status = 'active'`;
+
+    const DISTANCE_BUCKET_KM = 5;
+
+    const distanceExpr = hasLocation
+        ? `(6371 * acos(
+                    cos(radians($1)) * cos(radians(d.lat)) *
+                    cos(radians(d.lng) - radians($2)) +
+                    sin(radians($1)) * sin(radians(d.lat))
+                ))`
+        : null;
+
+    let orderBy: string;
+    if (hasLocation) {
+        if (sort === "top_rated") {
+            orderBy = `ORDER BY FLOOR(${distanceExpr} / ${DISTANCE_BUCKET_KM}) ASC, d.rating DESC NULLS LAST`;
+        } else if (sort === "lowest_price") {
+            orderBy = `ORDER BY FLOOR(${distanceExpr} / ${DISTANCE_BUCKET_KM}) ASC, d."appointmentFee" ASC NULLS LAST`;
+        } else {
+            orderBy = `ORDER BY distance_km ASC`;
+        }
+    } else {
+        if (sort === "top_rated") {
+            orderBy = `ORDER BY d.rating DESC NULLS LAST`;
+        } else if (sort === "lowest_price") {
+            orderBy = `ORDER BY d."appointmentFee" ASC NULLS LAST`;
+        } else {
+            orderBy = `ORDER BY d.completed_appointments DESC`;
+        }
+    }
+
+    const mainQuery = `
+        SELECT
+            d.id, d.name, d.city, d.specialization,d.completed_appointments,
+            d.status, d."profilePic", d.address, d.rating, d."ratingsCount",
+            d."appointmentFee", d."createdAt",
+            ${distanceSelect},
+            COUNT(*) OVER() AS total_count
+        FROM doctors d
+        ${whereClause}
+        GROUP BY d.id
+        ${orderBy}
+        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `;
+
+    params.push(limit, offset);
+
+    const result = await pool.query(mainQuery, params);
+
+    const totalDoctors = result.rows[0]?.total_count ?? 0;
+
+    const userDiscount = userId ? await findUserActiveDiscount(userId) : null;
+
+    const finalDoctors = result.rows.map((doc: any) => {
+        const originalFee = Number(doc.appointmentFee) || 0;
+        const { finalFee, discount } = applyDiscountToFee(originalFee, userDiscount);
+
+        return {
+            ...doc,
+            distance_km: doc.distance_km ? Math.round(Number(doc.distance_km)) : null,
+            minutes: doc.distance_km ? Math.round(Number(doc.distance_km) * 1.5) : null,
+            originalFee,
+            finalFee,
+            discount
+        };
+    });
+
+    const response = {
+        doctors: finalDoctors,
+        results: result.rowCount,
+        totalDoctors: Number(totalDoctors),
+        totalPages: Math.ceil(Number(totalDoctors) / limit),
+        page
+    };
+
+    setCache(cacheKey, response, 500);
+
+    return response;
+}
+
+
+export const getDoctor = async (doctorId: string) => {
+
+    const cacheKey = `doctor_details:${doctorId}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
+    const [doctorResult, reviewsResult] = await Promise.all([
+        pool.query(`
+            SELECT id, name, email,about, city, specialization, status, 
+                "profilePic", address, rating, "ratingsCount", 
+                "appointmentFee", "createdAt"
+            FROM doctors 
+            WHERE id = $1 AND status = 'active'
+        `, [doctorId]),
+        pool.query(`
+            SELECT r.id, r.rate, r.comment, r."createdAt",
+                u.name AS user_name, u."profilePic" AS user_pic
+            FROM doctor_reviews r
+            JOIN users u ON r."user" = u.id
+            WHERE r.doctor = $1
+            ORDER BY r."createdAt" DESC
+            LIMIT 3
+        `, [doctorId])
+    ]);
+
+
+    if (!doctorResult.rows.length) throw new ApiError(404, "Doctor not found");
+
+    const response = {
+        doctor: doctorResult.rows[0],
+        reviews: reviewsResult.rows
+    }
+
+    setCache(cacheKey, response, 300);
+
+
+    return response;
+}
+
+export const getMeDoctor = async (doctor: User) => {
+
+    const cacheKey = `me_doctor:${doctor.id}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
+    const doctorProfile = await pool.query(`
+        SELECT id, name, email,about, phone, city, specialization, status, 
+            "profilePic", address, 
+            "appointmentFee", "createdAt"
+        FROM doctors 
+        WHERE id = $1
+    `, [doctor.id]);
+
+
+    if (!doctorProfile.rows.length) throw new ApiError(404, "Doctor not found");
+
+    setCache(cacheKey, doctorProfile.rows[0], 500);
+
+
+    return doctorProfile.rows[0];
+}

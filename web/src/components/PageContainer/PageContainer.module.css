@@ -1,0 +1,13 @@
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-top: 8px;
+    padding-bottom: 112px;
+}
+
+@media (min-width: 768px) {
+    .stack {
+        padding-bottom: 64px;
+    }
+}

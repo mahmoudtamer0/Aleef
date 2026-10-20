@@ -1,0 +1,7 @@
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+.empty { position: relative; display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: linear-gradient(160deg, #fff, var(--brand-50)); text-align: center; box-shadow: var(--shadow-card); }
+.orb { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, var(--brand-100), transparent 70%); pointer-events: none; }
+.icon { position: relative; display: grid; place-items: center; width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-600), var(--brand-500)); color: #fff; box-shadow: 0 16px 36px rgba(27, 127, 110, 0.35); animation: floaty 3.6s ease-in-out infinite; }
+.title { position: relative; margin-top: 10px; font-size: 24px; font-weight: 800; }
+.text { position: relative; max-width: 340px; color: var(--muted); }

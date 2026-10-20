@@ -1,0 +1,12 @@
+.card { display: flex; flex-direction: column; width: 100%; min-height: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: var(--shadow-card); }
+.head { padding: 22px 20px 12px; }
+.title { font-size: 24px; font-weight: 800; }
+.search { display: flex; align-items: center; gap: 8px; height: 46px; margin-top: 14px; padding: 0 14px; border: 2px solid transparent; border-radius: 16px; background: var(--brand-50); color: var(--muted); transition: border-color 0.2s, background 0.2s; }
+.search:focus-within { border-color: var(--brand-500); background: #fff; }
+.input { width: 100%; border: 0; outline: none; background: transparent; color: var(--ink); }
+.input::placeholder { color: var(--muted); }
+.items { display: flex; flex: 1; flex-direction: column; gap: 2px; min-height: 0; padding: 8px 10px 14px; overflow-y: auto; }
+.skeletons { display: flex; flex-direction: column; gap: 14px; padding: 12px; }
+.empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 36px 20px; text-align: center; color: var(--muted); }
+.emptyTitle { font-size: 17px; color: var(--ink); }
+.noMatch { padding: 24px 12px; text-align: center; color: var(--muted); }

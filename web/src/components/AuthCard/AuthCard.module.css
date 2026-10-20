@@ -1,0 +1,7 @@
+.page { display: grid; min-height: 100dvh; place-items: center; padding: 24px; }
+.card { width: 100%; max-width: 448px; padding: 32px; border: 1px solid var(--line); border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-card); text-align: center; }
+.logo { font-size: 24px; font-weight: 800; letter-spacing: 0.28em; color: var(--brand-600); }
+.title { margin-top: 24px; font-size: 24px; font-weight: 800; }
+.message { margin-top: 8px; color: var(--muted); }
+.link { display: inline-block; margin-top: 24px; font-weight: 700; color: var(--brand-600); }
+.link:hover { text-decoration: underline; }

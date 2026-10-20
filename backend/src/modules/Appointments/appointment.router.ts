@@ -1,0 +1,72 @@
+import express from "express";
+import { activeAppoinmentsForDoctor, addReview, approveAppointment, bookAppointment, cancelAppointmentByDoctor, cancelAppointmentByUser, changeAppoinmentStatus, checkPendingReview, editAppointmentTime, endAppoinment, getActiveAppointment, getAllAppoinments, getAppoinmentDetailsForAdmin, getAppointmentDetails, getAppointmentsRequestsForDoctor, getPrevAppoinments, getWalletTransactions, prevAppointmentsForDoctor, previewAppointment, rejectAppointment, skipAppointmentReview } from "./appointment.controler";
+import { upload } from "../../middlewares/appoinmentUploads"
+import validate from "../../middlewares/userValidate";
+import { addReviewSchema, bookAppointmentSchema, cancelAppointmentByUserSchema, editAppointmentTimeSchema, endAppointmentSchema, previewAppointmentSchema, rejectAppoinmentSchema } from "./appointment.validation";
+import { verifyToken } from "../../middlewares/verifyToken";
+import { allowTo } from "../../middlewares/allowTo";
+
+const router = express.Router()
+
+router.route("/")
+    .post(verifyToken, upload.single("profilePic"), validate(bookAppointmentSchema), bookAppointment)
+    .get(verifyToken, allowTo("ADMIN", "MODERATOR"), getAllAppoinments)
+
+router.route("/preview")
+    .post(verifyToken, validate(previewAppointmentSchema), previewAppointment)
+
+router.route("/get-my-active-appointment")
+    .get(verifyToken, getActiveAppointment)
+
+router.route("/requests")
+    .get(verifyToken, allowTo("DOCTOR"), getAppointmentsRequestsForDoctor)
+
+router.route("/active-appointments")
+    .get(verifyToken, allowTo("DOCTOR"), activeAppoinmentsForDoctor)
+
+router.route("/wallet-transactions")
+    .get(verifyToken, allowTo("DOCTOR"), getWalletTransactions)
+
+
+router.route("/get-my-previous-appointments")
+    .get(verifyToken, getPrevAppoinments)
+
+router.route("/doctor-performance")
+    .get(verifyToken, allowTo("DOCTOR"), prevAppointmentsForDoctor)
+
+router.route("/check-pending-review")
+    .get(verifyToken, checkPendingReview)
+
+router.route("/add-review/:appointmentId")
+    .post(verifyToken, allowTo("USER", "ADMIN", "MODERATOR"), validate(addReviewSchema), addReview);
+
+router.route("/skip-review/:appointmentId")
+    .post(verifyToken, allowTo("USER", "ADMIN", "MODERATOR"), skipAppointmentReview);
+
+router.route("/approve-appointment/:appointmentId")
+    .post(verifyToken, allowTo("DOCTOR"), approveAppointment);
+
+router.route("/reject-appointment/:appointmentId")
+    .post(verifyToken, allowTo("DOCTOR"), validate(rejectAppoinmentSchema), rejectAppointment);
+
+router.route("/end-appointment/:appointmentId")
+    .patch(verifyToken, upload.array("attachments", 5), allowTo("DOCTOR"), validate(endAppointmentSchema), endAppoinment);
+
+router.route("/change-status/:appointmentId")
+    .patch(verifyToken, allowTo("ADMIN", "MODERATOR"), changeAppoinmentStatus);
+
+
+router.route("/cancel-appointment-by-user/:appointmentId")
+    .patch(verifyToken, validate(cancelAppointmentByUserSchema), cancelAppointmentByUser);
+
+router.route("/cancel-appointment-by-doctor/:appointmentId")
+    .patch(verifyToken, validate(cancelAppointmentByUserSchema), cancelAppointmentByDoctor);
+
+router.route("/details-for-admin/:appointmentId")
+    .get(verifyToken, allowTo("ADMIN", "MODERATOR"), getAppoinmentDetailsForAdmin);
+
+router.route("/:appointmentId")
+    .get(verifyToken, getAppointmentDetails)
+    .patch(verifyToken, validate(editAppointmentTimeSchema), editAppointmentTime);
+
+export default router

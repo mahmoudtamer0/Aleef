@@ -1,0 +1,6 @@
+.wrap { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.price { font-size: 18px; font-weight: 800; color: var(--brand-600); font-variant-numeric: tabular-nums; }
+.old { font-size: 13px; font-weight: 500; color: var(--muted); }
+.lg .price { font-size: 32px; }
+.lg .old { font-size: 18px; }
+.badge { align-self: center; padding: 4px 10px; border-radius: 999px; background: linear-gradient(135deg, #ffb34d, #f2803a); color: #3a1b05; font-size: 13px; font-weight: 800; }

@@ -1,0 +1,8 @@
+.card { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 8px; padding: 22px; border-radius: 28px; color: #fff; transition: transform 0.3s; }
+.card:hover { transform: scale(1.02); }
+.navy { background: linear-gradient(135deg, var(--navy-800), var(--navy-600)); --btn-color: var(--navy-800); }
+.wine { background: linear-gradient(135deg, var(--wine-800), var(--wine-600)); --btn-color: var(--wine-800); }
+.violet { background: linear-gradient(135deg, var(--violet-800), var(--violet-600)); --btn-color: var(--violet-800); }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: rgba(255, 255, 255, 0.7); }
+.title { font-size: 22px; line-height: 1.2; }
+.button { align-self: flex-start; margin-top: 6px; }

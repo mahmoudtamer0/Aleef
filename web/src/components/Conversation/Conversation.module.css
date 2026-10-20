@@ -1,0 +1,23 @@
+.card { display: flex; flex: 1; flex-direction: column; min-height: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: var(--shadow-card); }
+
+.header { position: relative; display: flex; align-items: center; gap: 14px; padding: 14px 18px; overflow: hidden; background: linear-gradient(135deg, var(--brand-800), var(--brand-500)); color: #fff; }
+.orb { position: absolute; top: -50px; right: 60px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); pointer-events: none; }
+.back { position: relative; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); color: #fff; }
+.back:hover { background: rgba(255, 255, 255, 0.26); }
+.who { position: relative; flex: 1; min-width: 0; }
+.name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; font-weight: 800; line-height: 1.2; }
+.status { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255, 255, 255, 0.85); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; }
+.dotOff { background: #fbbf24; }
+.profile { position: relative; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); color: #fff; transition: background 0.2s; }
+.profile:hover { background: rgba(255, 255, 255, 0.28); }
+
+.banner { padding: 8px 16px; text-align: center; font-size: 13px; font-weight: 600; }
+.offline { background: #fff6ea; color: #5e4a2e; }
+.alert { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #fff0ee; color: #8e2018; }
+.dismiss { padding: 2px 8px; font-weight: 700; }
+
+.skeletons { display: flex; flex: 1; flex-direction: column; gap: 14px; padding: 24px; background: #f6fbfa; }
+.skeletonMine { align-self: flex-end; width: 55%; }
+.skeletonTheirs { width: 65%; }
+.failed { display: flex; flex: 1; align-items: center; justify-content: center; padding: 24px; }

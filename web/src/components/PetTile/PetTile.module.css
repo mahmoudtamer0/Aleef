@@ -1,0 +1,15 @@
+.card { position: relative; display: flex; flex-direction: column; height: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: var(--shadow-card); transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s; }
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); }
+.media { position: relative; }
+.photo { width: 100%; aspect-ratio: 4 / 3; }
+.photo img { transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.card:hover .photo img { transform: scale(1.07); }
+.fade { position: absolute; right: 0; bottom: 0; left: 0; height: 40%; background: linear-gradient(to top, rgba(16, 48, 43, 0.55), transparent); pointer-events: none; }
+.chip { position: absolute; top: 14px; left: 14px; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); font-size: 12px; font-weight: 800; color: var(--brand-800); }
+.chipCare { color: #8e2018; }
+.body { display: flex; flex: 1; flex-direction: column; gap: 4px; padding: 18px 20px 20px; }
+.name { font-size: 22px; font-weight: 800; }
+.meta { font-size: 14px; color: var(--muted); text-transform: capitalize; }
+.more { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 12px; font-size: 14px; font-weight: 700; color: var(--brand-700); }
+.more svg { transition: transform 0.25s; }
+.card:hover .more svg { transform: translateX(4px); }

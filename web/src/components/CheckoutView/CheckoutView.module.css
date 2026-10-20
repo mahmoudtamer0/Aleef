@@ -1,0 +1,36 @@
+.head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.title { font-size: 32px; font-weight: 800; line-height: 1.15; }
+.layout { display: grid; gap: 24px; }
+.steps { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.aside { min-width: 0; }
+
+.fields { display: grid; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 14px; font-weight: 700; }
+.input { width: 100%; padding: 13px 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; transition: border-color 0.2s, box-shadow 0.2s; }
+.input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.15); }
+.invalid { border-color: #e5857d; }
+.error { font-size: 13px; color: #8e2018; }
+.two { display: grid; gap: 16px; }
+
+.method { display: flex; align-items: center; gap: 14px; padding: 16px; border: 2px solid var(--brand-600); border-radius: 20px; background: var(--brand-50); }
+.radio { flex-shrink: 0; width: 20px; height: 20px; border: 6px solid var(--brand-600); border-radius: 50%; background: #fff; }
+.methodLabel { display: block; }
+.methodHint { font-size: 14px; color: var(--muted); }
+
+.items { display: flex; flex-direction: column; gap: 12px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+.item { display: flex; align-items: center; gap: 12px; }
+.thumb { width: 48px; height: 48px; border-radius: 12px; }
+.itemText { flex: 1; min-width: 0; }
+.itemTitle { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 700; }
+.itemQty { font-size: 13px; color: rgba(255, 255, 255, 0.75); }
+.itemTotal { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.orderError { padding: 12px 14px; border-radius: 14px; background: #fff0ee; color: #8e2018; font-size: 14px; }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 480px; margin: 24px auto; padding: 40px 28px; border: 1px dashed var(--brand-200); border-radius: 28px; background: #fff; text-align: center; }
+
+@media (min-width: 576px) { .two { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 992px) {
+  .layout { grid-template-columns: 1fr 400px; align-items: start; }
+  .aside { position: sticky; top: 88px; }
+}

@@ -1,0 +1,6 @@
+.card { display: flex; align-items: center; gap: 20px; height: 100%; padding: 28px; border-radius: 28px; background: linear-gradient(135deg, #ffb34d, #f2803a); color: #3a1b05; }
+.body { flex: 1; }
+.tag { padding: 4px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.55); font-size: 12px; font-weight: 800; }
+.title { display: block; margin: 10px 0 4px; font-size: 30px; }
+
+@media (max-width: 575px) { .card { flex-wrap: wrap; padding: 22px; } .title { font-size: 26px; } }

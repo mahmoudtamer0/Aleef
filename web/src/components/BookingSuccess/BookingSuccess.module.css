@@ -1,0 +1,5 @@
+.card { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 520px; margin: 24px auto; padding: 40px 28px; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: var(--shadow-lift); text-align: center; }
+.icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--brand-100); color: var(--brand-700); }
+.title { font-size: 26px; font-weight: 800; }
+.text { color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 14px; }

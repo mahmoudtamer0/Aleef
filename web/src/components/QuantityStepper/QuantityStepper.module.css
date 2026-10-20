@@ -1,0 +1,6 @@
+.stepper { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 2px solid var(--line); border-radius: 999px; background: #fff; }
+.button { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: var(--brand-700); transition: background 0.2s, transform 0.15s; }
+.button:hover:not(:disabled) { background: var(--brand-100); }
+.button:active:not(:disabled) { transform: scale(0.9); }
+.button:disabled { opacity: 0.35; cursor: not-allowed; }
+.value { min-width: 36px; text-align: center; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }

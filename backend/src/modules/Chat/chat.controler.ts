@@ -1,0 +1,84 @@
+import { User } from "../../types/user";
+import catchAsync from "../../utils/catchAsync";
+import * as chatServices from "./chat.services"
+
+
+
+export const getChats = catchAsync(async (req, res, next) => {
+
+    const user = req.user as User;
+    const chats = await chatServices.getChats(user);
+
+    return res.status(200).json({
+        status: "success",
+        chats,
+    })
+})
+
+
+export const getChatMessages = catchAsync(async (req, res, next) => {
+
+    const user = req.user as User;
+    const { chatId } = req.params;
+    const messages = await chatServices.getChatMessages(chatId, user);
+    return res.status(200).json({
+        status: "success",
+        messages: messages.messages,
+        chatId: messages.chatId,
+        user: messages.person,
+    })
+});
+
+
+export const getChatbotMessages = catchAsync(async (req, res, next) => {
+    const user = req.user as User;
+    const messages = await chatServices.getChatbotMessages(user);
+
+    return res.status(200).json({
+        status: "success",
+        messages: messages.messages,
+        chatId: messages.chatId
+    })
+})
+
+export const uploadChatPhoto = catchAsync(async (req, res, next) => {
+    const image = req.file?.path;
+
+    return res.status(200).json({
+        status: "success",
+        image
+    })
+})
+
+export const getAllChats = catchAsync(async (req, res, next) => {
+
+    const chats = await chatServices.getAllChats(req.query);
+    return res.status(200).json({
+        status: "success",
+        chats: chats.chats,
+        totalChats: chats.totalChats,
+        totalPages: chats.totalPages,
+        results: chats.results,
+        page: chats.page,
+    });
+
+})
+
+export const getChatMessagesForAdmin = catchAsync(async (req, res, next) => {
+    const { chatId } = req.params;
+    const messages = await chatServices.getChatMessagesForAdmin(chatId);
+    return res.status(200).json({
+        status: "success",
+        messages: messages,
+    })
+});
+
+export const getUnreadMessagesCount = catchAsync(async (req, res, next) => {
+    const user = req.user as User;
+    const unreadCount = await chatServices.getUnreadMessagesCount(user);
+
+    return res.status(200).json({
+        status: "success",
+        unreadCount
+    })
+})

@@ -1,0 +1,356 @@
+.ad-page {
+    padding: 28px 40px;
+    min-height: 100vh;
+    background: #f8fafb;
+}
+
+.ad-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 60vh;
+    color: #8a94a6;
+    font-size: 0.9rem;
+}
+
+.ad-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e0e5ec;
+    border-top-color: #2d9d8f;
+    border-radius: 50%;
+    animation: ad-spin 0.7s linear infinite;
+}
+
+@keyframes ad-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.ad-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    font-size: 0.82rem;
+}
+
+.ad-crumb {
+    color: #8a94a6;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.ad-crumb:hover {
+    color: #2d9d8f;
+}
+
+.ad-crumb--active {
+    color: #3d4a5c;
+    font-weight: 500;
+    cursor: default;
+}
+
+.ad-sep {
+    color: #c4cdd8;
+}
+
+.ad-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.ad-page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ad-back-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1.5px solid #e0e5ec;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #3d4a5c;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.ad-back-btn:hover {
+    background: #f0f4f8;
+    border-color: #c4cdd8;
+}
+
+.ad-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 3px;
+    letter-spacing: -0.3px;
+}
+
+.ad-page-subtitle {
+    font-size: 0.82rem;
+    color: #8a94a6;
+    margin: 0;
+}
+
+.ad-badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.ad-badge--pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.ad-badge--accepted {
+    background: #d1e7dd;
+    color: #0a3622;
+}
+
+.ad-badge--rejected {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.ad-badge--completed {
+    background: #cfe2ff;
+    color: #084298;
+}
+
+.ad-badge--cancelled {
+    background: #e2e3e5;
+    color: #41464b;
+}
+
+.ad-cards-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+
+
+.ad-cards-row:last-child {
+    grid-template-columns: 2fr 1fr;
+}
+
+.ad-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e8ecf0;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.ad-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    font-size: 0.87rem;
+    font-weight: 600;
+    color: #3d4a5c;
+    border-bottom: 1px solid #f0f2f5;
+    background: #fafbfc;
+}
+
+.ad-card-body {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ad-profile-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ad-profile-pic {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e8ecf0;
+    flex-shrink: 0;
+}
+
+.ad-profile-pic--pet {
+    border-radius: 10px;
+}
+
+.ad-profile-fallback {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #2d9d8f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.ad-profile-fallback--doctor {
+    background: #2563eb;
+}
+
+.ad-profile-fallback--pet {
+    border-radius: 10px;
+    background: #d97706;
+}
+
+.ad-profile-name {
+    font-size: 0.925rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 3px;
+}
+
+.ad-profile-sub {
+    font-size: 0.8rem;
+    color: #8a94a6;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ad-pet-tag {
+    background: #f0f4f8;
+    color: #5a6578;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.ad-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ad-field--col {
+    gap: 8px;
+}
+
+.ad-field--full {
+    margin-top: 4px;
+}
+
+.ad-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #8a94a6;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.ad-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a1a2e;
+}
+
+.ad-value--price {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #2d9d8f;
+}
+
+.ad-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ad-text-block {
+    font-size: 0.875rem;
+    color: #3d4a5c;
+    line-height: 1.55;
+    margin: 0;
+    background: #f8fafb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid #f0f2f5;
+}
+
+.ad-text-block--danger {
+    background: #fff5f5;
+    border-color: #ffd5d5;
+    color: #842029;
+}
+
+.ad-status-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.ad-status-select {
+    flex: 1;
+    border: 1.5px solid #e0e5ec;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    color: #1a1a2e;
+    background: #fafbfc;
+    outline: none;
+    transition: border-color 0.15s;
+    cursor: pointer;
+}
+
+.ad-status-select:focus {
+    border-color: #2d9d8f;
+    background: #fff;
+}
+
+.ad-btn-update {
+    background: #2d9d8f;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.ad-btn-update:hover:not(:disabled) {
+    background: #2d9d8f;
+}
+
+.ad-btn-update:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media screen and (max-width: 768px) {
+    .ad-cards-row {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}

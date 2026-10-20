@@ -1,0 +1,17 @@
+.layout { display: grid; gap: 24px; }
+.steps { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.aside { min-width: 0; }
+
+.label { display: block; margin: 18px 0 8px; font-size: 14px; font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { height: 40px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 14px; font-weight: 600; color: #3f5e58; transition: background 0.2s; }
+.chip:hover { background: var(--brand-50); }
+.chipOn { border-color: var(--brand-200); background: var(--brand-100); color: var(--brand-800); }
+.textarea { width: 100%; min-height: 96px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: #fff; resize: vertical; }
+.textarea:focus { border-color: var(--brand-500); outline: none; }
+.hint { margin-top: 6px; font-size: 13px; color: var(--muted); }
+
+@media (min-width: 992px) {
+  .layout { grid-template-columns: 1fr 360px; align-items: start; }
+  .aside { position: sticky; top: 88px; }
+}

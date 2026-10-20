@@ -1,0 +1,27 @@
+.card { display: flex; align-items: center; gap: 14px; height: 100%; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-card); transition: transform 0.3s, box-shadow 0.3s; }
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+
+.icon { display: grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; border-radius: 16px; transition: transform 0.3s; }
+.card:hover .icon { transform: scale(1.1) rotate(-6deg); }
+.tintBrand { background: var(--brand-100); color: var(--brand-700); }
+.tintOrange { background: #ffebd4; color: #b3560f; }
+.tintBlue { background: #e3eafb; color: var(--navy-600); }
+.tintPurple { background: #efe4fa; color: #6a3fa0; }
+
+.text { flex: 1; min-width: 0; }
+.title { display: block; }
+.hint { font-size: 13px; color: var(--muted); }
+.arrow { color: var(--brand-600); opacity: 0.4; transition: transform 0.3s, opacity 0.3s; }
+.card:hover .arrow { transform: translateX(4px); opacity: 1; }
+
+.card:active { transform: scale(0.97); }
+
+/* phones: compact 2x2 tiles, icon on top */
+@media (max-width: 575px) {
+  .card { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; border-radius: 22px; }
+  .icon { width: 44px; height: 44px; border-radius: 14px; }
+  .arrow { display: none; }
+  .text { flex: none; }
+  .title { font-size: 15px; }
+  .hint { font-size: 12px; }
+}

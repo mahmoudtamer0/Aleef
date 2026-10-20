@@ -1,0 +1,9 @@
+.banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; border: 1px solid; border-radius: var(--radius-card); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.message { font-size: 17px; }
+.reason { margin-top: 4px; font-size: 14px; }
+.success { background: var(--brand-50); border-color: var(--brand-200); color: var(--brand-800); }
+.warning { background: var(--cream); border-color: var(--cream-line); color: #5e4a2e; }
+.danger { background: #fff0ee; border-color: #f3c9c4; color: #8e2018; }
+.info { background: #e8eefb; border-color: #c9d6f2; color: var(--navy-800); }
+.neutral { background: #f1f4f4; border-color: var(--line); color: var(--muted); }

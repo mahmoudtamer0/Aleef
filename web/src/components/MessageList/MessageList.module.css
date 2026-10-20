@@ -1,0 +1,12 @@
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+
+.wrap { position: relative; flex: 1; min-height: 0; }
+/* soft dotted background, like a notebook page */
+.scroller { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 20px; overflow-y: auto; background-color: #f6fbfa; background-image: radial-gradient(rgba(27, 127, 110, 0.09) 1.5px, transparent 1.5px); background-size: 22px 22px; overscroll-behavior: contain; }
+.groupGap { margin-top: 10px; }
+.day { align-self: center; margin: 12px 0 6px; padding: 5px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 12px; font-weight: 700; color: var(--muted); }
+.empty { margin: auto; text-align: center; color: var(--muted); }
+
+.newPill { position: absolute; bottom: 16px; left: 50%; display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 999px; background: var(--brand-600); color: #fff; font-size: 13px; font-weight: 700; box-shadow: 0 10px 24px rgba(27, 127, 110, 0.4); transform: translateX(-50%); }
+.newPill:hover { background: var(--brand-700); }
+.newPill svg { animation: bob 1.2s ease-in-out infinite; }

@@ -1,0 +1,80 @@
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes floatyBig { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-36px) scale(1.08); } }
+@keyframes heroFlow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes pawFloat { 0% { transform: translateY(0) rotate(0); opacity: 0; } 15% { opacity: 0.17; } 85% { opacity: 0.17; } 100% { transform: translateY(-340px) rotate(26deg); opacity: 0; } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: none; } }
+
+.hero { position: relative; display: grid; gap: 28px; padding: 20px; overflow: hidden; border-radius: 28px; background: var(--brand-700); color: #fff; }
+
+/* a slowly moving gradient behind everything */
+.bg { position: absolute; inset: 0; background: linear-gradient(120deg, var(--brand-800), var(--brand-600) 40%, var(--brand-500) 70%, var(--brand-700)); background-size: 240% 240%; animation: heroFlow 16s ease-in-out infinite; pointer-events: none; }
+
+/* paw prints drifting up */
+.paws { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.paw { position: absolute; bottom: -40px; color: #fff; opacity: 0; animation: pawFloat 10s linear infinite; }
+.paw:nth-child(1) { left: 6%; width: 34px; height: 34px; animation-delay: 0s; }
+.paw:nth-child(2) { left: 24%; width: 26px; height: 26px; animation-delay: -3.5s; animation-duration: 12s; }
+.paw:nth-child(3) { left: 43%; width: 40px; height: 40px; animation-delay: -6s; }
+.paw:nth-child(4) { left: 60%; width: 28px; height: 28px; animation-delay: -1.5s; animation-duration: 11s; }
+.paw:nth-child(5) { left: 76%; width: 36px; height: 36px; animation-delay: -8s; }
+.paw:nth-child(6) { left: 91%; width: 24px; height: 24px; animation-delay: -4.5s; animation-duration: 13s; }
+
+.orb { position: absolute; pointer-events: none; border-radius: 50%; background: rgba(255, 255, 255, 0.1); }
+.orbTop { top: -80px; right: -56px; width: 256px; height: 256px; animation: floaty 7s ease-in-out infinite; }
+.orbBottom { bottom: -40px; left: 38%; width: 144px; height: 144px; animation: floatyBig 3.2s ease-in-out infinite; animation-delay: -1.5s; }
+
+/* left column */
+.left { position: relative; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.greeting { align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); font-size: 14px; font-weight: 600; animation: pop 0.6s 0.2s backwards; }
+.name { font-size: clamp(36px, 11vw, 52px); font-weight: 800; line-height: 1.05; animation: pop 0.7s 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+.subtitle { font-size: 16px; color: rgba(255, 255, 255, 0.92); animation: pop 0.7s 0.4s backwards; }
+.petsHeader { margin-top: 6px; }
+.petsLabel { font-size: 15px; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.8); }
+.manage { font-size: 14px; font-weight: 700; }
+.manage:hover { text-decoration: underline; }
+
+.skeletons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.firstPet { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: var(--radius-card); background: rgba(255, 255, 255, 0.14); transition: background 0.3s; }
+.firstPet:hover { background: rgba(255, 255, 255, 0.24); }
+.firstPetTitle { display: block; font-size: 18px; }
+.firstPetHint { font-size: 14px; color: rgba(255, 255, 255, 0.85); }
+.plus { display: grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); font-size: 26px; }
+
+/* pets: a row you swipe sideways on phones, three equal columns from tablet up */
+.petsRow { display: grid; grid-auto-flow: column; grid-auto-columns: 158px; gap: 14px; margin: -8px -20px -32px; padding: 8px 20px 40px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 20px; scrollbar-width: none; }
+.petsRow::-webkit-scrollbar { display: none; }
+.addTile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px; border: 2px dashed rgba(255, 255, 255, 0.55); border-radius: var(--radius-card); font-weight: 700; text-align: center; scroll-snap-align: start; transition: transform 0.3s, background 0.3s; }
+.addTile:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.1); }
+.addTile:active { transform: scale(0.97); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+.actions > * { flex: 1; }
+
+/* right column: the colored cards, then the stats */
+.right { position: relative; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.cards { display: flex; gap: 12px; margin: 0 -20px; padding: 2px 20px 6px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 20px; scrollbar-width: none; }
+.cards::-webkit-scrollbar { display: none; }
+.cards > :is(div, a) { flex: 0 0 82%; scroll-snap-align: start; animation: slideIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+.cards > :is(div, a):nth-child(1) { animation-delay: 0.4s; }
+.cards > :is(div, a):nth-child(2) { animation-delay: 0.52s; }
+.cards > :is(div, a):nth-child(3) { animation-delay: 0.64s; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; animation: pop 0.6s 0.7s backwards; }
+.stat { padding: 12px 14px; border-radius: 18px; background: #fff; color: var(--ink); }
+.statLink { transition: transform 0.2s; }
+.statLink:hover { transform: translateY(-2px); }
+.statLabel { font-size: 11px; text-transform: uppercase; color: var(--muted); }
+.accent { color: var(--brand-600); }
+
+@media (min-width: 576px) {
+  .hero { gap: 32px; padding: 40px; border-radius: var(--radius-hero); }
+  .petsRow { grid-auto-columns: calc((100% - 28px) / 3); margin: -8px -8px -32px; padding: 8px 8px 40px; scroll-padding-inline: 8px; }
+  .actions > * { flex: none; }
+  .cards { flex-direction: column; flex: 1; margin: 0; padding: 0; overflow: visible; scroll-snap-type: none; }
+  .cards > :is(div, a) { flex: 1 1 auto; }
+  .stat { padding: 16px; border-radius: 20px; }
+  .statLabel { font-size: 13px; }
+  .subtitle { font-size: 17px; }
+  .left { gap: 20px; }
+}
+@media (min-width: 992px) { .hero { grid-template-columns: 1.4fr 1fr; } }

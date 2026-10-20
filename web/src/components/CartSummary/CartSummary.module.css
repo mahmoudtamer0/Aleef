@@ -1,0 +1,17 @@
+.card { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 28px; overflow: hidden; border-radius: 28px; background: linear-gradient(160deg, var(--brand-800), var(--brand-600)); color: #fff; box-shadow: var(--shadow-lift); }
+.orb { position: absolute; top: -60px; right: -50px; width: 190px; height: 190px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); pointer-events: none; }
+.title { position: relative; font-size: 20px; font-weight: 800; }
+.header { position: relative; }
+
+.rows { position: relative; display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; border-bottom: 1px dashed rgba(255, 255, 255, 0.35); transition: opacity 0.25s; }
+.updating { opacity: 0.55; }
+.row { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.label { color: rgba(255, 255, 255, 0.8); }
+.value { font-weight: 700; }
+.total { position: relative; display: flex; align-items: baseline; justify-content: space-between; transition: opacity 0.25s; }
+.totalLabel { font-size: 16px; font-weight: 700; }
+.totalValue { font-size: 32px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.error { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.actions { position: relative; display: flex; flex-direction: column; gap: 10px; }
+.skeletons { position: relative; display: flex; flex-direction: column; gap: 14px; }

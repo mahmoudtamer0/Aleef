@@ -1,0 +1,41 @@
+.card { display: grid; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: var(--shadow-lift); }
+
+/* teal side: the doctor */
+.head { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: 28px; overflow: hidden; background: linear-gradient(135deg, var(--brand-800), var(--brand-500)); color: #fff; }
+.shapeCircle { position: absolute; top: -48px; right: -40px; width: 170px; height: 170px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); pointer-events: none; }
+.shapeSquare { position: absolute; right: 36px; bottom: -64px; width: 150px; height: 150px; border-radius: 44px; background: rgba(255, 255, 255, 0.07); transform: rotate(20deg); pointer-events: none; }
+.doctor { position: relative; display: flex; align-items: center; gap: 18px; }
+.ring { padding: 5px; border: 2px solid rgba(255, 255, 255, 0.35); border-radius: 32px; background: rgba(255, 255, 255, 0.18); }
+.photo { width: 88px; height: 88px; border-radius: 26px; }
+.doctorName { font-size: 26px; font-weight: 800; line-height: 1.15; }
+.doctorRole { margin-top: 2px; font-size: 16px; color: rgba(255, 255, 255, 0.85); }
+.status { position: relative; display: inline-flex; align-items: center; align-self: flex-start; gap: 8px; padding: 8px 16px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px; background: rgba(255, 255, 255, 0.14); font-size: 14px; font-weight: 700; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; }
+.confirmed { background: #4ade80; }
+.pending { background: #fbbf24; }
+
+/* white side: the details */
+.body { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 24px; }
+.details { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 24px; background: var(--brand-50); }
+.when { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tile { display: flex; align-items: center; gap: 14px; }
+.tileIcon { display: grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--brand-600); }
+.tileLabel { display: block; font-size: 13px; color: var(--muted); }
+.tileValue { font-size: 20px; font-weight: 800; }
+.pet { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 20px; background: #fff; }
+.petIcon { display: grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: var(--brand-100); color: var(--brand-700); }
+.petName { display: block; font-size: 18px; }
+.petHint { font-size: 14px; color: var(--muted); }
+.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.footerText { display: flex; align-items: center; gap: 12px; font-weight: 500; color: var(--muted); }
+.footerIcon { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--brand-50); color: var(--brand-600); }
+
+/* no upcoming appointment */
+.empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 28px; border: 1px dashed var(--brand-200); border-radius: 28px; background: #fff; }
+.emptyTitle { display: block; font-size: 18px; }
+.emptyHint { color: var(--muted); }
+
+@media (min-width: 992px) {
+  .card { grid-template-columns: minmax(320px, 2fr) 3fr; }
+  .body { padding: 28px; }
+}

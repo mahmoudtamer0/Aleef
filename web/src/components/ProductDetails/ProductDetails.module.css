@@ -1,0 +1,8 @@
+.layout { display: grid; gap: 24px; }
+.sticky { min-width: 0; }
+.about { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-card); color: #2c4a44; white-space: pre-line; }
+
+@media (min-width: 992px) {
+  .layout { grid-template-columns: 1.05fr 1fr; align-items: start; }
+  .sticky { position: sticky; top: 88px; }
+}

@@ -1,0 +1,38 @@
+@keyframes ring { 0%, 88%, 100% { transform: rotate(0); } 91% { transform: rotate(14deg); } 94% { transform: rotate(-12deg); } 97% { transform: rotate(8deg); } }
+@keyframes badgePop { 0% { transform: scale(0.4); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes drop { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+.wrapper { position: relative; }
+.button { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--brand-600); transition: background 0.2s; }
+.button:hover { background: var(--brand-50); }
+.buttonOpen { background: var(--brand-100); }
+.ring { animation: ring 4s infinite; transform-origin: 50% 10%; }
+.badge { position: absolute; top: -6px; right: -6px; display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border: 2px solid var(--surface); border-radius: 999px; background: #f2803a; color: #fff; font-size: 11px; font-weight: 800; animation: badgePop 0.3s ease-out; }
+
+.panel { position: absolute; top: calc(100% + 10px); right: 0; z-index: 50; width: 380px; max-width: calc(100vw - 24px); overflow: hidden; border: 1px solid var(--line); border-radius: 24px; background: #fff; box-shadow: 0 24px 60px rgba(16, 48, 43, 0.25); animation: drop 0.2s ease-out; }
+.head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.title { font-size: 18px; font-weight: 800; }
+.count { padding: 3px 10px; border-radius: 999px; background: #fff0e0; color: #c2570f; font-size: 12px; font-weight: 800; }
+
+.list { max-height: min(480px, 68vh); overflow-y: auto; }
+.item { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 14px 18px; border-bottom: 1px solid var(--line); text-align: left; transition: background 0.2s; }
+.item:last-child { border-bottom: 0; }
+.item:hover { background: var(--brand-50); }
+.unread { background: #f4fbf9; }
+.icon { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 14px; }
+.tintAppointment { background: var(--brand-100); color: var(--brand-700); }
+.tintChat { background: #e3eafb; color: var(--navy-600); }
+.tintShop { background: #ffebd4; color: #b3560f; }
+.tintOther { background: #efe4fa; color: #6a3fa0; }
+.text { flex: 1; min-width: 0; }
+.itemTitle { display: block; font-size: 14px; font-weight: 700; }
+.itemBody { display: -webkit-box; margin-top: 2px; overflow: hidden; font-size: 13px; color: var(--muted); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.time { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.dot { flex-shrink: 0; width: 9px; height: 9px; margin-top: 6px; border-radius: 50%; background: #f2803a; }
+
+.skeletons { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; }
+.empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 36px 18px; text-align: center; color: var(--muted); }
+.emptyTitle { color: var(--ink); }
+.error { padding: 18px; }
+
+@media (max-width: 575px) { .panel { position: fixed; top: 72px; right: 12px; left: 12px; width: auto; max-width: none; } }

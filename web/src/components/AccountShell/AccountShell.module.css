@@ -1,0 +1,27 @@
+.layout { display: grid; gap: 24px; }
+.sidebar { min-width: 0; }
+.card { overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: var(--shadow-card); }
+.profile { position: relative; display: flex; align-items: center; gap: 14px; padding: 24px 22px; overflow: hidden; background: linear-gradient(135deg, var(--brand-800), var(--brand-500)); color: #fff; }
+.orb { position: absolute; top: -50px; right: -40px; width: 150px; height: 150px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); pointer-events: none; }
+.who { position: relative; min-width: 0; }
+.name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; font-weight: 800; }
+.email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; color: rgba(255, 255, 255, 0.85); }
+
+.nav { display: flex; flex-direction: column; gap: 4px; padding: 10px; }
+.link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; font-weight: 600; color: #3f5e58; transition: background 0.2s, transform 0.2s; }
+.link:hover { background: var(--brand-50); transform: translateX(2px); }
+.active { background: var(--brand-100); color: var(--brand-800); box-shadow: inset 3px 0 0 var(--brand-600); }
+.content { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+
+/* phones: the menu becomes a row of pills at the top */
+@media (max-width: 991px) {
+  .profile { display: none; }
+  .nav { flex-direction: row; overflow-x: auto; padding: 8px; scrollbar-width: none; }
+  .link { flex-shrink: 0; padding: 10px 16px; white-space: nowrap; }
+  .link:hover { transform: none; }
+  .active { box-shadow: none; }
+}
+@media (min-width: 992px) {
+  .layout { grid-template-columns: 290px 1fr; align-items: start; }
+  .sidebar { position: sticky; top: 88px; }
+}

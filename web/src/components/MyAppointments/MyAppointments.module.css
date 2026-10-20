@@ -1,0 +1,5 @@
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.chip { height: 40px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 14px; font-weight: 600; color: #3f5e58; transition: background 0.2s; }
+.chip:hover { background: var(--brand-50); }
+.chipOn { border-color: var(--brand-200); background: var(--brand-100); color: var(--brand-800); }
+.list { display: flex; flex-direction: column; gap: 12px; }

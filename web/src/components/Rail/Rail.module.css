@@ -1,0 +1,10 @@
+/* Phones: one row you swipe sideways (the next card peeks in, so people know to swipe). Bigger screens: a normal grid. */
+.rail { display: flex; gap: 14px; margin: 0 -16px; padding: 4px 16px 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.rail > :is(div, article, a) { flex: 0 0 74%; scroll-snap-align: start; }
+
+@media (min-width: 576px) {
+  .rail { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin: 0; padding: 0; overflow: visible; scroll-snap-type: none; }
+  .rail > :is(div, article, a) { flex: none; }
+}
+@media (min-width: 992px) { .rail { grid-template-columns: repeat(4, 1fr); } }

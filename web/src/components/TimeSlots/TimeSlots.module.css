@@ -1,0 +1,6 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+.slot { height: 44px; border: 1px solid var(--line); border-radius: 14px; background: #fff; font-size: 15px; font-weight: 600; transition: background 0.2s; }
+.slot:hover { background: var(--brand-50); }
+.on { border-color: var(--brand-600); background: var(--brand-600); color: #fff; }
+.on:hover { background: var(--brand-700); }
+.empty { color: var(--muted); }

@@ -1,0 +1,2 @@
+.loader { display: grid; min-height: 100dvh; place-items: center; }
+.logo { font-size: 24px; font-weight: 800; letter-spacing: 0.28em; color: var(--brand-600); }

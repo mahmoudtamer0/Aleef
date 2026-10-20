@@ -1,0 +1,6 @@
+.container {
+    width: 100%;
+    max-width: var(--page-max, 1536px);
+    margin: 0 auto;
+    padding-inline: var(--page-padding, 24px);
+}

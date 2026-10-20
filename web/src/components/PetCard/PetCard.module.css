@@ -1,0 +1,23 @@
+@keyframes cardIn { from { opacity: 0; transform: translateY(22px) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  100% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+}
+
+.card { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: var(--radius-card); background: rgba(255, 255, 255, 0.14); color: #fff; text-align: left; scroll-snap-align: start; transition: transform 0.3s, background 0.3s; animation: cardIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+.card:active { transform: scale(0.97); }
+.card:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.24); }
+.active { background: #fff; color: var(--ink); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18); }
+.active:hover { background: #fff; }
+
+.photoWrap { position: relative; width: 64px; height: 64px; }
+.photo { width: 64px; height: 64px; border-radius: 20px; }
+.dot { position: absolute; right: -4px; bottom: -4px; width: 12px; height: 12px; border: 2px solid #fff; border-radius: 50%; background: #4ade80; animation: pulseDot 1.8s infinite; }
+
+.name { display: block; font-size: 20px; }
+.meta { font-size: 13px; color: rgba(255, 255, 255, 0.85); }
+.active .meta { color: var(--muted); }
+
+.chip { align-self: flex-start; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.chipGood { background: var(--brand-100); color: var(--brand-800); }
+.chipCare { background: #ffe1dd; color: #8e2018; }

@@ -1,0 +1,18 @@
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.count { font-size: 14px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { height: 40px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 14px; font-weight: 600; color: #3f5e58; transition: background 0.2s, transform 0.15s; }
+.chip:hover { background: var(--brand-50); }
+.chip:active { transform: scale(0.96); }
+.chipOn { border-color: var(--brand-200); background: var(--brand-100); color: var(--brand-800); }
+
+.bottom { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 28px; text-align: center; color: var(--muted); }
+.sentinel { height: 1px; width: 100%; }
+.hint { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; }
+.arrows { color: var(--brand-600); animation: bounce 1.4s ease-in-out infinite; }
+.more { padding: 10px 20px; border: 2px solid var(--brand-600); border-radius: 999px; color: var(--brand-700); font-size: 14px; font-weight: 700; }
+.more:hover { background: var(--brand-50); }
+.loading { font-size: 14px; font-weight: 600; color: var(--brand-700); }
+.end { padding: 8px 18px; border-radius: 999px; background: var(--brand-50); font-size: 14px; font-weight: 600; color: var(--brand-700); }

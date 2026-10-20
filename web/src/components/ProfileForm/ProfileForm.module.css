@@ -1,0 +1,19 @@
+.layout { display: grid; gap: 24px; }
+.photoCard { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 32px 24px; border: 1px solid var(--line); border-radius: 28px; background: linear-gradient(160deg, #fff, var(--brand-50)); box-shadow: var(--shadow-card); text-align: center; }
+.photoName { font-size: 20px; font-weight: 800; }
+.photoEmail { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.card { padding: 28px; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: var(--shadow-card); }
+.title { margin-bottom: 20px; font-size: 20px; font-weight: 800; }
+.fields { display: grid; gap: 20px; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.label { font-size: 14px; font-weight: 700; }
+.input { width: 100%; padding: 13px 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; transition: border-color 0.2s, box-shadow 0.2s; }
+.input:focus { border-color: var(--brand-500); outline: none; box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.15); }
+.input:disabled { background: var(--brand-50); color: var(--muted); cursor: not-allowed; }
+.invalid { border-color: #e5857d; }
+.error { font-size: 13px; color: #8e2018; }
+.hint { font-size: 13px; color: var(--muted); }
+.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 14px; margin-top: 24px; }
+.saved { margin-right: auto; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--brand-700); }
+.formError { margin-right: auto; font-size: 14px; color: #8e2018; }
+@media (min-width: 992px) { .layout { grid-template-columns: 300px 1fr; align-items: start; } }

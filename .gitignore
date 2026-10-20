@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+coverage/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Package manager and tool caches
+.npm/
+.pnpm-store/
+.eslintcache
+.stylelintcache
+.cache/
+.turbo/
+
+# Testing
+.nyc_output/
+playwright-report/
+test-results/
+
+# Frontend generated files
+.next/
+vite.svg
+
+# Uploads and local user-generated files
+uploads/
+tmp/
+temp/
+
+# Database and local data files
+*.sqlite
+*.sqlite3
+*.db
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+*.swo
+
+# Local certificates and private keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Deployment and local tooling
+.vercel/
+.netlify/
+.serverless/
+
+# Python caches (if any tooling uses Python)
+__pycache__/
+*.py[cod]
+.venv/
+venv/

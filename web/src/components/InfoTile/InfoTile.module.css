@@ -1,0 +1,5 @@
+.tile { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.icon { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--brand-50); color: var(--brand-600); }
+.label { display: block; font-size: 13px; color: var(--muted); }
+.value { display: block; font-size: 16px; font-weight: 700; overflow-wrap: anywhere; }
+a.value:hover { text-decoration: underline; }

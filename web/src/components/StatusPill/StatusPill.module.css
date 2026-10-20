@@ -1,0 +1,7 @@
+.pill { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.success { background: var(--brand-100); color: var(--brand-800); }
+.warning { background: #fff0d6; color: #8a5a00; }
+.danger { background: #ffe1dd; color: #8e2018; }
+.info { background: #e8eefb; color: var(--navy-800); }
+.neutral { background: #eef1f1; color: var(--muted); }

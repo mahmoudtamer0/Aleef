@@ -1,0 +1,10 @@
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.add { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; height: 100%; min-height: 320px; padding: 24px; border: 2px dashed var(--brand-200); border-radius: 28px; background: var(--brand-50); text-align: center; font-weight: 700; color: var(--brand-700); transition: background 0.25s, transform 0.25s, border-color 0.25s; }
+.add:hover { border-color: var(--brand-500); background: var(--brand-100); transform: translateY(-4px); }
+.plus { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--brand-600); color: #fff; box-shadow: 0 10px 24px rgba(27, 127, 110, 0.35); }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 56px 28px; border: 1px dashed var(--brand-200); border-radius: 28px; background: #fff; text-align: center; }
+.emptyIcon { display: grid; place-items: center; width: 96px; height: 96px; border-radius: 50%; background: var(--brand-100); color: var(--brand-700); animation: floaty 3.4s ease-in-out infinite; }
+.emptyTitle { margin-top: 8px; font-size: 24px; font-weight: 800; }
+.emptyText { max-width: 360px; margin-bottom: 8px; color: var(--muted); }

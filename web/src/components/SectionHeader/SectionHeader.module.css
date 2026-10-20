@@ -1,0 +1,6 @@
+.header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+@keyframes grow { from { width: 0; } }
+.title { position: relative; padding-bottom: 8px; font-size: 24px; font-weight: 800; }
+.title::after { content: ""; position: absolute; bottom: 0; left: 0; width: 40px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--brand-500), #f2803a); animation: grow 0.9s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+.link { font-size: 14px; font-weight: 700; color: var(--brand-600); }
+.link:hover { text-decoration: underline; }

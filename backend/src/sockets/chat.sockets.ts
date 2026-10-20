@@ -1,0 +1,267 @@
+import { clearCache } from "../cache";
+import pool from "../db";
+import { sendNotificationService } from "../utils/notifications/sendNotificationService";
+
+
+export = (io: any, socket: any) => {
+
+    socket.on("join_chat", async (data: any) => {
+        const chatId = typeof data === 'string' ? data : data?.chatId;
+
+        if (!chatId || typeof chatId !== 'string') return;
+
+        const member = await pool.query(
+            `SELECT 1 FROM chat_members WHERE "chatId" = $1 AND member_id = $2`,
+            [chatId, socket.user.id]
+        );
+        if (!member.rowCount) return;
+
+        (socket as any).currentChat = chatId;
+        socket.join(chatId);
+
+        await pool.query(
+            `INSERT INTO unread_messages (user_id, "chatId", "lastMessage", "unreadCount")
+             VALUES ($1, $2, '', 0)
+             ON CONFLICT ("chatId", user_id) DO UPDATE SET "unreadCount" = 0
+             RETURNING id`,
+            [socket.user.id, chatId]
+        );
+    });
+
+
+    socket.on("leave_chat", (data: any) => {
+        const chatId = typeof data === 'string' ? data : data?.chatId;
+        if (!chatId) return;
+
+        socket.leave(chatId);
+        (socket as any).currentChat = null;
+    });
+
+    socket.on("send_message", async (data: { chatId: string; message: string, image: string }) => {
+        try {
+            const model: "Doctor" | "User" =
+                socket.user.role === "DOCTOR" ? "Doctor" : "User";
+
+
+
+            if (data.message.trim().length < 1 && !data.image) {
+                io.to(socket.user.id).emit("error_message", {
+                    errMessage: "you can't send empty message :)"
+                });
+                return;
+            }
+
+            if (data.message.length > 2000) {
+                return io.to(socket.user.id).emit("error_message", { errMessage: "message too long" });
+            }
+
+            const notificationBody = data.message?.trim().length > 0 ? data.message : "📷 Photo";
+
+            const chatResult = await pool.query(
+                `SELECT c.id, c."expiresAt", c."updatedAt", cm.member_id AS other_member_id, cm.member_model AS other_member_model,
+                CASE WHEN cm.member_model = 'User' THEN
+                    jsonb_build_object('id', ou.id, 'name', ou.name, 'profilePic', ou."profilePic")
+                WHEN cm.member_model = 'Doctor' THEN
+                    jsonb_build_object('id', od.id, 'name', od.name, 'profilePic', od."profilePic")
+                END AS other_member_profile,
+                CASE WHEN my_cm.member_model = 'User' THEN
+                    jsonb_build_object('id', mu.id, 'name', mu.name, 'profilePic', mu."profilePic")
+                WHEN my_cm.member_model = 'Doctor' THEN
+                    jsonb_build_object('id', md.id, 'name', md.name, 'profilePic', md."profilePic")
+                END AS sender_profile
+                 FROM chats c
+                 JOIN chat_members my_cm ON c.id = my_cm."chatId" AND my_cm.member_id = $1
+                 JOIN chat_members cm ON c.id = cm."chatId" AND cm.member_id != $1
+                 LEFT JOIN users ou ON cm.member_model = 'User' AND cm.member_id = ou.id
+                 LEFT JOIN doctors od ON cm.member_model = 'Doctor' AND cm.member_id = od.id
+                 LEFT JOIN users mu ON my_cm.member_model = 'User' AND my_cm.member_id = mu.id
+                 LEFT JOIN doctors md ON my_cm.member_model = 'Doctor' AND my_cm.member_id = md.id
+                 WHERE c.id = $2`,
+                [socket.user.id, data.chatId]
+            );
+
+            if (!chatResult.rows.length) return;
+
+            if (chatResult.rows[0].expiresAt && new Date(chatResult.rows[0].expiresAt) < new Date()) {
+                await pool.query(
+                    `UPDATE chats SET status = 'closed' WHERE id = $1`,
+                    [data.chatId]
+                );
+
+                await pool.query(
+                    `INSERT INTO unread_messages (user_id, "chatId", "lastMessage", "unreadCount")
+                     VALUES ($1, $2, '', 0)
+                     ON CONFLICT ("chatId", user_id) DO UPDATE SET "unreadCount" = 0`,
+                    [socket.user.id, data.chatId]
+                );
+
+                const expiredMessage = {
+                    id: "00000000-0000-0000-0000-000000000000",
+                    text: "This chat has expired and is now closed. 🔒",
+                    sender: {
+                        id: "00000000-0000-0000-0000-000000000000",
+                        name: "System",
+                        profilePic: "sda"
+                    },
+                    chatId: data.chatId,
+                    createdAt: new Date(),
+                    isDeleted: false,
+                };
+
+                console.log("expiredMessage:", expiredMessage);
+
+                socket.emit("receive_message", expiredMessage);
+                return;
+            }
+
+            const { other_member_id } = chatResult.rows[0];
+
+
+            const formattedMessage = {
+                id: crypto.randomUUID(),
+                text: data.message,
+                image: data.image || null,
+                sender: { id: socket.user.id, name: socket.user.name, profilePic: socket.user.profilePic },
+                chatId: data.chatId,
+                createdAt: new Date(),
+                isDeleted: false,
+            };
+
+
+            clearCache(`chats:${socket.user.id}`);
+            clearCache(`chat_messages_${socket.user.id}_${data.chatId}`);
+
+            socket.emit("receive_message", formattedMessage);
+
+
+            const messageResult = await pool.query(
+                `INSERT INTO messages ("chatId", sender, sender_model, chat_type, text, image)
+                 VALUES ($1, $2, $3, 'personal', $4, $5)
+                 RETURNING id`,
+                [data.chatId, socket.user.id, model, data.message, data.image || null]
+            );
+
+            const message = messageResult.rows[0];
+
+            const sender = chatResult.rows[0].sender_profile;
+
+
+            await pool.query(
+                `UPDATE chats SET "lastMessage" = $1, "updatedAt" = NOW() WHERE id = $2`,
+                [message.id, data.chatId]
+            );
+
+
+
+            const otherProfile = chatResult.rows[0].other_member_profile;
+
+
+            const sockets = await io.in(`user:${other_member_id}`).fetchSockets();
+            const isInSameChat = sockets.some(
+                (s: any) => s.currentChat === data.chatId || io.sockets.adapter.rooms.get(data.chatId)?.has(s.id)
+            );
+            const isOnline = sockets.length > 0;
+
+
+            clearCache(`chats:${other_member_id}`);
+            clearCache(`chat_messages_${other_member_id}_${data.chatId}`);
+            clearCache(`all_chats:`);
+
+            if (isInSameChat) {
+                io.to(`user:${other_member_id}`).emit("receive_message", formattedMessage);
+
+                const unreadResult = await pool.query(
+                    `INSERT INTO unread_messages ("chatId", user_id, "lastMessage", "unreadCount")
+                     VALUES ($1, $2, $3, 1)
+                     ON CONFLICT ("chatId", user_id) DO UPDATE SET
+                        "unreadCount" = unread_messages."unreadCount" + 1,
+                        "lastMessage" = $3
+                     RETURNING "unreadCount"`,
+                    [data.chatId, other_member_id, formattedMessage.text]
+                );
+
+                io.to(`user:${other_member_id}`).emit("chat_updated", {
+                    id: data.chatId,
+                    person: { _id: sender.id, name: sender.name, profilePic: sender.profilePic },
+                    lastMessage: formattedMessage,
+                    unreadCount: unreadResult.rows[0].unreadCount,
+                    updatedAt: new Date()
+                })
+
+                const otherModel = model === "Doctor" ? "USER" : "DOCTOR";
+
+                sendNotificationService(other_member_id, otherModel, sender.name, notificationBody)
+                    .catch((err: any) => console.error("Notification error:", err));
+
+            } else if (isOnline) {
+
+
+
+                const unreadResult = await pool.query(
+                    `INSERT INTO unread_messages ("chatId", user_id, "lastMessage", "unreadCount")
+                     VALUES ($1, $2, $3, 1)
+                     ON CONFLICT ("chatId", user_id) DO UPDATE SET
+                        "unreadCount" = unread_messages."unreadCount" + 1,
+                        "lastMessage" = $3
+                     RETURNING "unreadCount"`,
+                    [data.chatId, other_member_id, formattedMessage.text]
+                );
+
+                io.to(`user:${other_member_id}`).emit("chat_updated", {
+                    id: data.chatId,
+                    person: { _id: sender.id, name: sender.name, profilePic: sender.profilePic },
+                    lastMessage: formattedMessage,
+                    unreadCount: unreadResult.rows[0].unreadCount,
+                    updatedAt: new Date()
+                })
+
+
+
+                io.to(`user:${other_member_id}`).emit("notification", {
+                    type: "MESSAGE",
+                    title: sender.name,
+                    body: formattedMessage.text,
+                    data: {
+                        type: "chat",
+                        chatId: data.chatId,
+                    }
+                })
+
+                const otherModel = model === "Doctor" ? "USER" : "DOCTOR";
+
+                sendNotificationService(other_member_id, otherModel, sender.name, notificationBody)
+                    .catch((err: any) => console.error("Notification error:", err));
+
+
+            } else {
+                await pool.query(
+                    `INSERT INTO unread_messages ("chatId", user_id, "lastMessage", "unreadCount")
+                     VALUES ($1, $2, $3, 1)
+                     ON CONFLICT ("chatId", user_id) DO UPDATE SET
+                        "unreadCount" = unread_messages."unreadCount" + 1,
+                        "lastMessage" = $3`,
+                    [data.chatId, other_member_id, formattedMessage.text]
+                );
+
+                const otherModel = model === "Doctor" ? "USER" : "DOCTOR";
+
+                sendNotificationService(other_member_id, otherModel, sender.name, notificationBody)
+                    .catch((err: any) => console.error("Notification error:", err));
+            }
+
+            io.to(`user:${socket.user.id}`).emit("chat_updated", {
+                id: data.chatId,
+                person: { _id: other_member_id, name: otherProfile?.name || "Unknown", profilePic: otherProfile?.profilePic || null },
+                lastMessage: formattedMessage,
+                unreadCount: 0,
+                updatedAt: new Date()
+            });
+
+            return;
+        } catch (err) {
+            console.error("Error sending message:", err);
+        }
+    })
+
+
+};

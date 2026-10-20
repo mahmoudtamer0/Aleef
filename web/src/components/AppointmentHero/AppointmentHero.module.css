@@ -1,0 +1,14 @@
+.hero { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 28px; overflow: hidden; border-radius: var(--radius-hero); background: linear-gradient(135deg, var(--brand-800), var(--brand-500)); color: #fff; }
+.orb { position: absolute; top: -60px; right: -40px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); pointer-events: none; }
+.who { position: relative; display: flex; align-items: center; gap: 18px; }
+.ring { flex-shrink: 0; padding: 5px; border: 2px solid rgba(255, 255, 255, 0.35); border-radius: 32px; background: rgba(255, 255, 255, 0.18); }
+.photo { width: 88px; height: 88px; border-radius: 26px; }
+.name { font-size: 28px; font-weight: 800; line-height: 1.15; }
+.role { margin-top: 2px; font-size: 16px; color: rgba(255, 255, 255, 0.85); }
+.status { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px; background: rgba(255, 255, 255, 0.14); font-size: 14px; font-weight: 700; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.success { background: #4ade80; }
+.warning { background: #fbbf24; }
+.danger { background: #f87171; }
+.info { background: #93c5fd; }
+.neutral { background: #fff; }

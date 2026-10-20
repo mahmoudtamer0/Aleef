@@ -1,0 +1,10 @@
+.steps { display: flex; align-items: center; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.step { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.badge { display: grid; place-items: center; width: 30px; height: 30px; border: 2px solid var(--line); border-radius: 50%; background: #fff; font-size: 13px; transition: background 0.3s, border-color 0.3s; }
+.line { flex: 1; max-width: 72px; height: 2px; background: var(--line); transition: background 0.3s; }
+.current { color: var(--ink); }
+.current .badge { border-color: var(--brand-600); background: var(--brand-600); color: #fff; }
+.done { color: var(--brand-700); }
+.done .badge { border-color: var(--brand-600); background: var(--brand-100); color: var(--brand-700); }
+.lineDone { background: var(--brand-600); }
+@media (max-width: 575px) { .label { display: none; } .current .label { display: inline; } }

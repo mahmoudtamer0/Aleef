@@ -1,0 +1,35 @@
+.search-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aab4c0;
+    pointer-events: none;
+}
+
+
+.search-input {
+    width: 100%;
+    border: 1.5px solid #e0e5ec;
+    border-radius: 8px;
+    padding: 9px 34px 9px 36px;
+    font-size: 0.875rem;
+    color: #1a1a2e;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    border-color: #2d9d8f;
+}
+
+.search-input::placeholder {
+    color: #aab4c0;
+}

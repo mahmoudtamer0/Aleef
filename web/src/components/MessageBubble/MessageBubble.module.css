@@ -1,0 +1,25 @@
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+.row { display: flex; align-items: flex-end; gap: 8px; animation: pop 0.22s ease-out; }
+.mine { justify-content: flex-end; }
+.avatarSlot { flex-shrink: 0; width: 32px; }
+
+.bubble { max-width: min(72%, 520px); padding: 10px 14px 8px; border-radius: 20px; overflow-wrap: anywhere; }
+.theirs { border: 1px solid var(--line); border-bottom-left-radius: 20px; background: #fff; box-shadow: 0 2px 8px rgba(31, 127, 112, 0.06); }
+.mineBubble { border-bottom-right-radius: 20px; background: linear-gradient(135deg, var(--brand-600), var(--brand-500)); color: #fff; box-shadow: 0 6px 16px rgba(27, 127, 110, 0.25); }
+.theirsEnd { border-bottom-left-radius: 6px; }
+.mineEnd { border-bottom-right-radius: 6px; }
+
+.text { white-space: pre-wrap; }
+.deleted { font-style: italic; opacity: 0.7; }
+.time { display: block; margin-top: 2px; text-align: right; font-size: 11px; opacity: 0.65; }
+
+.photoBubble { padding: 4px 4px 6px; }
+.photo { position: relative; display: block; width: 260px; max-width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 16px; background: var(--brand-100); }
+.photo img { transition: transform 0.4s; }
+.photo:hover img { transform: scale(1.05); }
+.caption { padding: 8px 10px 0; }
+.photoBubble .time { padding-right: 8px; }
+
+.system { display: flex; justify-content: center; }
+.systemText { padding: 6px 14px; border-radius: 999px; background: rgba(16, 48, 43, 0.07); font-size: 13px; color: var(--muted); }
