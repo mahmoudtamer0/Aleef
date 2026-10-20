@@ -1,6 +1,7 @@
 // TODO: match these to your real backend routes.
 export const endpoints = {
   me: "/users/me",
+  updateProfile: "/users/edit-user-profile",
   pets: "/pets/get-my-pets",
   createPet: "/pets/add-pet",
   pet: (id: string) => `/pets/${id}`,

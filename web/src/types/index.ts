@@ -103,8 +103,8 @@ export type DoctorProfileData = { doctor: Doctor; reviews: Review[] };
 export type DoctorSchedule = { doctor: Doctor; days: string[]; firstDaySlots: string[] };
 
 export type NewAppointment = {
-  doctorId: string;
-  petId: string;
+  doctor: string;
+  pet: string;
   date: string;
   time: string;
   reason: string;
