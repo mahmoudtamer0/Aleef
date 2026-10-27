@@ -10,11 +10,15 @@ export function DoctorListCard({ doctor }: { doctor: Doctor }) {
   const hasDiscount = doctor.fee != null && doctor.originalFee != null && doctor.fee < doctor.originalFee;
 
   return (
-    <Link className={styles.card} href={routes.doctor(doctor.id)}>
+    <div className={styles.card}>
       <Photo src={doctor.photo} alt={doctor.name} className={styles.photo} />
 
       <div className={styles.info}>
-        <h3 className={styles.name}>{doctor.name}</h3>
+        <h3 className={styles.name}>
+          <Link className={styles.link} href={routes.doctor(doctor.id)}>
+            {doctor.name}
+          </Link>
+        </h3>
         <p className={styles.meta}>{[doctor.specialty, doctor.city].filter(Boolean).join(" · ")}</p>
         <span className={styles.rating}>
           <Star aria-hidden size={16} className={styles.star} />
@@ -40,8 +44,10 @@ export function DoctorListCard({ doctor }: { doctor: Doctor }) {
           {doctor.fee != null && <b className={styles.price}>EGP {doctor.fee}</b>}
           {hasDiscount && <span className={styles.oldPrice}>{doctor.originalFee}</span>}
         </div>
-        <Button size="sm" href={routes.doctor(doctor.id)}>Book</Button>
+        <Button size="sm" href={routes.doctor(doctor.id)} className={styles.book}>
+          Book
+        </Button>
       </div>
-    </Link>
+    </div>
   );
 }

@@ -82,8 +82,6 @@ export async function createOrder(input: OrderInput): Promise<string> {
     return "26b879d4-0000-4000-8000-000000000000";
   }
 
-  console.log("createOrder input", input);
-  // TODO: adjust the route / body to your real create-order endpoint.
   const res = await api.post(endpoints.orders, input);
   const body = res.data?.data ?? res.data;
   return String(body?.orderId ?? body?.order?.id ?? body?.id ?? (typeof body === "string" ? body : ""));
