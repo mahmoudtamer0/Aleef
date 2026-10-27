@@ -1,40 +1,76 @@
-# ALEEF web
+# ALEEF Web
 
-Next.js (App Router) + TypeScript + CSS Modules. Bootstrap is used only for its grid and helper classes.
-Auth is a token in localStorage (no cookies).
+The website for pet owners. Next.js (App Router) + TypeScript.
+
+Part of the [ALEEF monorepo](../README.md). It talks to [`../backend`](../backend/README.md).
+
+## Features
+
+- Home with your pets, alerts, quick actions, best doctors and store picks
+- Find doctors (search, sort, **near me**, infinite scroll), doctor profile with reviews
+- Booking: pick pet, day and time, reason and notes
+- Appointments: upcoming card, history, details, cancel with a reason
+- **Real-time chat** with doctors (text and photos)
+- **Real-time notifications** (bell, popups) and unread badges
+- Pet store: search, sort, product page, cart (kept in `localStorage`), checkout, orders
+- Pets (add, edit, remove) and profile pages
+
+## Stack
+
+Next.js · React · TypeScript · CSS Modules (+ Bootstrap grid/utilities only) · TanStack Query · Socket.IO client · Zustand
+
+## Quick start
+
+Requires Node.js 20+.
 
 ```bash
 npm install
-cp .env.example .env.local   # NEXT_PUBLIC_USE_MOCK=true works without a backend
-npm run dev
+cp .env.example .env.local
+npm run dev        # http://localhost:3000
 ```
 
-## Folders
-| Folder | What lives there |
+The default `.env.example` turns on **mock mode** (`NEXT_PUBLIC_USE_MOCK=true`): every request returns fake data, so the whole app (including chat and notifications) works with no backend.
+
+## Use the real backend
+
+Edit `.env.local`:
+
+| Variable | What it is |
 |---|---|
-| `src/app/` | Pages. Each folder is a URL. `globals.css` holds the colors/fonts (CSS variables). |
-| `src/components/` | One folder per component: `Name.tsx` + `Name.module.css`. |
-| `src/hooks/` | Custom hooks: `usePets`, `useBestDoctors`, `useAuth`... |
-| `src/lib/api/` | Everything that talks to the backend (axios client + one file per resource). |
-| `src/lib/` | `storage.ts` (localStorage), `mock.ts` (fake data), `utils.ts`. |
-| `src/context/` | `AuthContext` (who is logged in, demo account logic). |
-| `src/types/` | The shape of User, Pet, Doctor, Product. |
-| `src/config/` | `routes.ts`, `endpoints.ts`, `env.ts`. |
+| `NEXT_PUBLIC_USE_MOCK` | `false` to call the real API |
+| `NEXT_PUBLIC_API_URL` | Backend base URL, e.g. `http://localhost:5000/api` |
+| `NEXT_PUBLIC_SOCKET_URL` | Socket.IO server. Optional: defaults to the API URL without `/api` |
+| `NEXT_PUBLIC_DEMO_TOKEN` | Token of the demo account. Visitors without a session are signed in with it |
 
-Data flow: `PetsHero.tsx` -> `usePets()` -> `getPets()` in `lib/api/pets.ts` -> backend.
+Route paths are in `src/config/endpoints.ts`.
 
-## Server vs client components
-- Default is a Server Component. Add `"use client"` only for hooks, events or browser APIs.
-- No cookies, so anything that needs the logged-in user's data is fetched in a client component.
-- Server: pages, `(user)/layout.tsx`, `QuickActions`, `FreeVisitCard`, `SectionHeader`, `DoctorCard`, `ProductCard`.
-- Client: `AuthGuard`, `Navbar`, `UserMenu`, `DemoBanner`, `PetsHero`, `BestDoctors`, `PetEssentials`, `CareTip`.
+> The demo token ships in the browser bundle (`NEXT_PUBLIC_`), so the backend must only let that account do harmless things.
 
-## Styling rules
-- Colors, radius and shadows are CSS variables in `app/globals.css`: use `var(--brand-600)` instead of a hex.
-- Each component styles itself in its own `.module.css`.
-- Bootstrap helpers (`row g-4`, `col-lg-3`, `d-flex`, `justify-content-between`) are fine for layout.
+## Scripts
 
-## Connecting the real backend
-1. Set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_USE_MOCK=false` in `.env.local`.
-2. Edit `src/config/endpoints.ts`.
-3. Edit the `to*` functions in `src/lib/api/*.ts` (the only places that know the backend response shape).
+| Command | What it does |
+|---|---|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Run the production build |
+| `npm run typecheck` | TypeScript check |
+
+## How it is organised
+
+```
+src/
+├── app/          pages (each folder is a URL) + globals.css (design tokens)
+├── components/   one folder per component: Name.tsx + Name.module.css
+├── hooks/        custom hooks: usePets, useChats, useCart ...
+├── lib/api/      everything that talks to the backend (one file per resource)
+├── context/      AuthContext (session + demo account), SocketContext
+├── types/        shared TypeScript types
+└── config/       routes, endpoints, env
+```
+
+Data flow: `Component → hook (TanStack Query) → lib/api function → backend`.
+
+- Server Components by default; `"use client"` only where hooks or events are needed.
+- There are no cookies: the token lives in `localStorage` and pages are protected by `AuthGuard`.
+- The socket never talks to components directly: `SocketContext` turns events into **TanStack Query cache updates**, and components just read the cache.
+- Colors, radius and shadows are CSS variables in `src/app/globals.css`.

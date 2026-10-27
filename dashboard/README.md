@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# ALEEF Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The admin dashboard for ALEEF.
 
-Currently, two official plugins are available:
+Part of the [ALEEF monorepo](../README.md). It talks to [`../backend`](../backend/README.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+<!-- TODO: screenshot -->
+![Dashboard](../docs/screenshots/dashboard.png)
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Overview: total users, doctors, revenue and appointments, with charts
+- Users and doctors
+- Doctor sign-up requests (review them)
+- Appointments
+- Products and orders (see the details and change an order's status)
+- Chats
+- Light and dark mode, global search
 
-## Expanding the ESLint configuration
+<!-- TODO: add or remove items so they match what is built. -->
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+TODO (for example: React · TypeScript · Vite · React Router · a chart library · ...)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Quick start
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Requires Node.js 20+ and a running backend (see [`../backend/README.md`](../backend/README.md)).
+
+```bash
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Environment variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Variable | Description |
+|---|---|
+| `TODO_API_URL` | Backend base URL, e.g. `http://localhost:5000/api` |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Sign in
+
+Use an **admin** account. With the demo data from `backend/database/seed.sql`:
+
+| Email | Password |
+|---|---|
+| `TODO` | `TODO` |
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview the production build |
+
+TODO: match these to your `package.json`.

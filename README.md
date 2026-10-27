@@ -1,303 +1,109 @@
-# ALEEF 🐾
-### A Smarter Way to Care for Your Pets
+# ALEEF
 
-**ALEEF** is an integrated pet-care platform designed to make pet ownership easier by bringing veterinary services, pet health management, and pet supplies together in one place.
+> A pet-care platform: find a vet near you, book an appointment, chat with your doctor, and shop for your pet. Web app, admin dashboard, REST + real-time backend, and a Flutter mobile app.
 
-From booking veterinary appointments to managing medical records and shopping for pet essentials, ALEEF aims to simplify the entire pet-care experience through a connected digital ecosystem.
+<!-- TODO: put a wide screenshot or a short GIF of the web home page here -->
+![ALEEF web home](docs/screenshots/home.png)
 
-This repository brings together the **web application, administration dashboard, and backend API** into a single codebase.
-
----
-
-## 📌 Table of Contents
-
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Applications](#-applications)
-- [Tech Stack](#-tech-stack)
-- [System Architecture](#-system-architecture)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Environment Variables](#-environment-variables)
-- [API & Security](#-api--security)
-- [Future Improvements](#-future-improvements)
-- [Contributors](#-contributors)
+**Live demo:** <https://aleef-web.vercel.app/> — you are signed in automatically with a demo account (nothing to register).
+**Admin dashboard demo:** <https://aleef-dashboard.vercel.app/>
 
 ---
 
-## 🌟 Overview
+## What you can do
 
-Pet owners often rely on multiple disconnected services to find veterinarians, schedule appointments, track vaccinations, and purchase essential supplies.
+**Pet owners (web + mobile)**
+- Manage pet profiles (photo, type, birth date, records).
+- Find vets by name, city or specialty, sorted by rating, price or **distance from you**.
+- Book a visit: pick a pet, a day and a free time slot, add a reason and notes.
+- Follow and cancel appointments; get a **real-time notification** when a doctor accepts.
+- **Chat with the doctor** (text and photos) once the appointment is accepted.
+- Shop for pet products: search, sort, cart, checkout, order tracking.
 
-ALEEF brings these experiences together in a unified platform built around the needs of pet owners, veterinarians, and administrators.
+**Admins (dashboard)**
+- Users, doctors and doctor sign-up requests.
+- Appointments, products, orders (update the status), chats.
+- Revenue and appointment charts.
 
-The platform consists of three main components:
+<!-- TODO: add or remove items so they match what is really built. Doctors: describe what they can do and where. -->
 
-- **Web Application:** The user-facing experience for accessing pet-care services.
-- **Admin Dashboard:** A centralized interface for managing platform operations and monitoring key resources.
-- **Backend API:** The core service responsible for business logic, authentication, data management, appointments, orders, and real-time communication.
+## Screenshots
 
-The goal is to build a scalable, maintainable, and user-friendly ecosystem that makes pet care more accessible and organized.
+| Home | Booking | Chat |
+|---|---|---|
+| ![](docs/screenshots/home.png) | ![](docs/screenshots/booking.png) | ![](docs/screenshots/chat.png) |
 
-## ✨ Key Features
+| Store | Orders | Dashboard |
+|---|---|---|
+| ![](docs/screenshots/store.png) | ![](docs/screenshots/orders.png) | ![](docs/screenshots/dashboard.png) |
 
-### 🐶 Pet Management
-- Manage pet profiles and essential information.
-- Maintain pet medical and vaccination records.
-- Keep important pet-care information organized in one place.
-
-### 🩺 Veterinary Services
-- Discover available veterinarians.
-- Book and manage veterinary appointments.
-- Support appointment status workflows, including pending, accepted, rejected, completed, and cancelled appointments.
-- Manage veterinary schedules and appointment availability.
-
-### 🛍️ Pet Supplies Marketplace
-- Browse pet products and supplies.
-- Manage shopping carts and place orders.
-- Support product inventory and stock-aware checkout.
-- Manage orders and product information through the administrative dashboard.
-
-### 💬 Real-Time Communication
-- Real-time messaging powered by Socket.IO.
-- Communication features designed to support interaction within the platform.
-
-### 🤖 AI-Powered Assistance
-- AI chatbot integration to help users access pet-care information and assistance.
-
-### 🔐 Authentication & Authorization
-- JWT-based authentication.
-- Role-based access control (RBAC).
-- Google OAuth integration.
-- Email verification and account-related security workflows.
-
-### 🛠️ Administration Dashboard
-- Manage users and veterinarian accounts.
-- Manage products and orders.
-- Monitor and manage appointments.
-- Perform administrative actions, including account restrictions.
-
----
-
-## 🧩 Applications
-
-| Component | Description |
-|---|---|
-| Web Application | The user-facing interface for pet-care services |
-| Admin Dashboard | Administrative tools for managing platform resources |
-| Backend API | Business logic, authentication, database operations, and integrations |
-
-Each component has a separate responsibility while working together as part of the same platform.
-
-## 🧰 Tech Stack
-
-### Backend
-- Node.js
-- TypeScript
-- Express.js
-- PostgreSQL
-- Socket.IO
-- JWT Authentication
-- Google OAuth
-- Cloudinary
-- OpenAI API
-
-### Admin Dashboard
-- React
-- TypeScript
-- REST API Integration
-
-### Web Application
-- Frontend technologies and libraries used by the web client
-
-> Update this section with the exact framework, styling solution, and other libraries used by the web application.
-
-### Infrastructure & Tools
-- Git & GitHub
-- Environment-based configuration
-- PostgreSQL connection pooling
-- Caching for frequently accessed data
-- Cloud-based media storage
-
----
-
-## 🏗️ System Architecture
-
-ALEEF follows a modular client-server architecture in which the frontend applications communicate with a shared backend API.
+## Architecture
 
 ```mermaid
-flowchart TD
-    U[Pet Owners] --> W[Web Application]
-    A[Administrators] --> D[Admin Dashboard]
-
-    W --> API[Backend API]
-    D --> API
-
-    API --> DB[(PostgreSQL)]
-    API --> RT[Socket.IO]
-    API --> CL[Cloudinary]
-    API --> AI[OpenAI API]
-    API --> AUTH[Authentication Services]
+flowchart LR
+  Web["Web app<br/>Next.js"] --> API
+  Dash["Admin dashboard"] --> API
+  Mobile["Mobile app<br/>Flutter"] --> API
+  API["Backend API<br/>Node.js · Express · TypeScript"] --> DB[("PostgreSQL")]
+  API <--> IO["Socket.IO<br/>chat · notifications"]
+  API --> Cloud["Cloudinary<br/>images"]
+  API --> Push["Push notifications"]
+  API --> Mail["Email"]
+  IO --> Web
+  IO --> Mobile
 ```
 
-### Architecture Highlights
 
-- **Separation of concerns:** Frontend applications and backend business logic are maintained independently.
-- **Centralized API:** Applications share backend services instead of duplicating business logic.
-- **Relational data management:** PostgreSQL stores the platform's structured data.
-- **Real-time capabilities:** Socket.IO supports real-time communication.
-- **External integrations:** Cloudinary and OpenAI provide media management and AI capabilities.
+## Tech stack
 
----
-
-## 📁 Project Structure
-
-The repository is organized as a monorepo containing the main applications and services.
-
-```text
-ALEEF/
-├── web/              # User-facing web application
-├── dashboard/        # Admin dashboard
-├── backend/           # Node.js / Express API
-├── README.md
-└── .gitignore
-```
-
-> The directory names above are illustrative. Adjust them to match the actual repository structure.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-Make sure you have the following installed:
-
-- Node.js (compatible with the project dependencies)
-- npm
-- PostgreSQL
-- Git
-
-Additional services or API credentials may be required depending on the integrations you enable.
-
-### 1. Clone the Repository
-
-```bash
-git clone <YOUR_REPOSITORY_URL>
-cd ALEEF
-```
-
-### 2. Install Dependencies
-
-Install dependencies separately for each application, according to its package manager and project configuration.
-
-```bash
-cd backend
-npm install
-```
-
-Repeat for the web application and dashboard directories.
-
-### 3. Configure Environment Variables
-
-Create the required `.env` files based on each application's configuration and the environment variables documented below.
-
-Never commit real credentials or production secrets.
-
-### 4. Set Up the Database
-
-Configure your PostgreSQL connection and ensure the required database schema is initialized using the project's existing migration or database setup process.
-
-### 5. Run the Applications
-
-Start each component using the scripts defined in its respective `package.json`.
-
-For example, if the backend defines a development script:
-
-```bash
-cd backend
-npm run dev
-```
-
-Follow the individual application's configuration for running the web client and dashboard.
-
----
-
-## 🔑 Environment Variables
-
-The following table describes common configuration values that may be required. Exact variable names depend on the implementation.
-
-| Variable | Purpose |
+| Part | Stack |
 |---|---|
-| `PORT` | Backend server port |
-| `DATABASE_URL` | PostgreSQL connection string |
-| `JWT_SECRET` | JWT signing secret |
-| `GOOGLE_CLIENT_ID` | Google OAuth client identifier |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
-| `CLOUDINARY_API_KEY` | Cloudinary API key |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `CLIENT_URL` | Frontend origin used by the backend |
-| `REDIS_URL` | Optional Redis connection, if configured |
+| `web/` | Next.js (App Router), TypeScript, CSS Modules, TanStack Query, Socket.IO client |
+| `dashboard/` | TODO (e.g. React, TypeScript, ...) |
+| `backend/` | Node.js, Express, TypeScript, PostgreSQL (`pg`), Socket.IO, TODO (auth, uploads, email, push) |
+| Mobile | Flutter (separate repo) |
 
-**Important:** These are reference names, not a guarantee of the exact environment variables used in this repository. Check the source code and configuration files before setting them.
+## Repository layout
 
----
+```
+aleef/
+├── backend/     REST API + Socket.IO server        → backend/README.md
+├── web/         Website for pet owners             → web/README.md
+├── dashboard/   Admin dashboard                    → dashboard/README.md
+└── docs/        Screenshots
+```
 
-## 🔒 API & Security
+## Run it locally
 
-The backend provides a centralized layer for application services and data access.
+**Fastest way to look around (no backend, no database):** the web app has a mock mode with fake data.
 
-Key security and backend considerations include:
+```bash
+cd web
+npm install
+cp .env.example .env.local     # NEXT_PUBLIC_USE_MOCK=true is already set
+npm run dev                    # http://localhost:3000
+```
 
-- Token-based authentication and protected routes.
-- Role-based authorization for restricted operations.
-- Secure handling of credentials through environment variables.
-- Request validation and consistent error handling.
-- Controlled access to uploaded media and external services.
-- Database connection management and stock-safe order processing.
+**The full stack** (you need Node.js 20+ and PostgreSQL 15+):
 
-For API documentation, add a link to your API reference or provide an exported Postman collection if available.
+1. **Database + backend:** follow [`backend/README.md`](backend/README.md) (it covers the schema and demo data).
+2. **Web:** in `web/`, set `NEXT_PUBLIC_USE_MOCK=false` and `NEXT_PUBLIC_API_URL` in `.env.local`, then `npm run dev`.
+3. **Dashboard:** follow [`dashboard/README.md`](dashboard/README.md).
 
-**API Documentation:** `Add your API documentation link here`
+## Engineering highlights
 
----
+Things I'm proud of, and where to find them:
 
-## 🔮 Future Improvements
+- **Safe checkout.** An order runs in one database transaction, and stock is taken with `UPDATE ... WHERE stock >= qty`, so two buyers can never oversell the last item. If anything fails, everything rolls back. → `backend/` orders service
+- **Real-time chat and notifications.** Socket.IO rooms per user and per chat, unread counters, and the web app turns socket events into cache updates (no polling). → `backend/` chat sockets, `web/src/context/SocketContext.tsx`
+- **Nearest doctors.** The Haversine distance is computed in SQL and combined with rating or price sorting, with pagination. The web app loads pages with infinite scroll. → `backend/` doctors service
+- **Caching with invalidation.** Hot reads are cached and cleared whenever the data changes (for example when an appointment is accepted or cancelled).
+- **Cancel with consequences.** Cancelling an appointment is a transaction: it updates the status, closes the chat, clears the caches and notifies the doctor.
+- **Demo mode for reviewers.** Visitors are signed in with a restricted demo account, with a banner to create a real one.
 
-Potential areas for further development include:
 
-- Expanded pet health tracking and reminders.
-- Enhanced veterinary discovery and location-based search.
-- Improved real-time notifications.
-- More comprehensive automated testing.
-- Performance monitoring and production observability.
-- Additional deployment automation and scalability improvements.
 
----
+## Author
 
-## 👥 Contributors
-
-ALEEF was developed as a collaborative project, with team members contributing to different parts of the platform.
-
-**Team Leader & Backend / Dashboard Developer**
-
-**Mahmoud Tamer**
-
-- GitHub: [@mahmoudtamer0](https://github.com/mahmoudtamer0)
-- LinkedIn: [mahmoudtamer0](https://www.linkedin.com/in/mahmoudtamer0/)
-
-Add the remaining team members and their contributions here.
-
----
-
-## 📄 License
-
-Add the appropriate license for this project. If the repository is not intended for open-source reuse, clarify the applicable usage and distribution terms.
-
----
-
-**Built with care for pets and the people who love them. 🐾**
-
-*ALEEF — Better care, one paw at a time.*
+**Mahmoud Tamer** — Full-stack developer.
+[GitHub](https://github.com/mahmoudtamer0) · [Portfolio](https://mahmoud-tamer-portfolio.vercel.app) · [LinkedIn]: https://www.linkedin.com/in/mahmoudtamer0/ · Email: mahmoud.tamer.developer@gmail.com
