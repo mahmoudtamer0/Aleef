@@ -3,8 +3,6 @@ node_modules/
 **/node_modules/
 
 # Environment variables and secrets
-.env
-.env.*
 !.env.example
 !.env.sample
 
@@ -58,7 +56,6 @@ Thumbs.db
 Desktop.ini
 
 # IDEs and editors
-.vscode/
 .idea/
 *.suo
 *.user
@@ -82,3 +79,4 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+config.bat

@@ -9,7 +9,6 @@ export type DoctorSort = "top_rated" | "lowest_price";
 export type DoctorsQuery = { page: number; search?: string; sort?: DoctorSort; lat?: number; lng?: number };
 export type DoctorsPage = { doctors: Doctor[]; page: number; totalPages: number; totalDoctors: number };
 
-// Field names come from the backend queries (getAvailableDoctors / getDoctor / getDoctorSchedual).
 export const toDoctor = (raw: any): Doctor => {
   const km = raw?.distance_km ?? raw?.distance;
   return {
@@ -39,7 +38,6 @@ const toReview = (raw: any): Review => ({
   userPhoto: raw?.user_pic ?? raw?.userPhoto ?? null,
 });
 
-// ---------------- home: top-rated few ----------------
 export async function getBestDoctors(limit = 4): Promise<Doctor[]> {
   if (env.useMock) return mockDelay(mockDoctors.slice(0, limit));
   const res = await api.get(endpoints.doctors);
@@ -49,7 +47,6 @@ export async function getBestDoctors(limit = 4): Promise<Doctor[]> {
     .slice(0, limit);
 }
 
-// ---------------- appointments page: ONE page of doctors ----------------
 export async function getAvailableDoctors({ page, search, sort, lat, lng }: DoctorsQuery): Promise<DoctorsPage> {
   if (env.useMock) return mockDoctorsPage({ page, search, sort, lat, lng });
 
@@ -65,19 +62,16 @@ export async function getAvailableDoctors({ page, search, sort, lat, lng }: Doct
   };
 }
 
-// ---------------- doctor profile: details + latest reviews ----------------
 export async function getDoctorProfile(id: string): Promise<DoctorProfileData> {
   if (env.useMock) {
     const doctor = mockDoctors.find((d) => d.id === id) ?? mockDoctors[0];
     return mockDelay({ doctor: { ...doctor, id, about: mockAbout, address: "12 Example Street, " + (doctor.city ?? "Cairo") }, reviews: mockReviews });
   }
   const res = await api.get(endpoints.doctor(id));
-  console.log("getDoctorProfile res.data:", res.data);
   const body = res.data ?? res.data;
   return { doctor: toDoctor(body?.doctorProfile.doctor), reviews: (body?.reviews ?? []).map(toReview) };
 }
 
-// ---------------- booking: available days (+ free times of the first day) ----------------
 export async function getDoctorSchedule(id: string): Promise<DoctorSchedule> {
   if (env.useMock) {
     const doctor = mockDoctors.find((d) => d.id === id) ?? mockDoctors[0];
@@ -85,11 +79,9 @@ export async function getDoctorSchedule(id: string): Promise<DoctorSchedule> {
     return mockDelay({ doctor: { ...doctor, id, address: "12 Example Street, " + (doctor.city ?? "Cairo") }, days, firstDaySlots: mockSlots(days[0]) });
   }
   const res = await api.get(endpoints.doctorSchedule(id));
-  console.log("getDoctorSchedule res.data:", res.data);
   const body = res.data ?? res.data;
   return {
     doctor: toDoctor({ ...body?.doctor, id }),
-    // TODO: doctorDays comes from getNextDays(); this expects strings or objects with a `date`.
     days: (body?.schedual ?? []).map((d: any) => String(typeof d === "string" ? d : d?.date).slice(0, 10)),
     firstDaySlots: (body?.firstDaySlots ?? []).map(String),
   };
@@ -99,8 +91,8 @@ export async function getDoctorSchedule(id: string): Promise<DoctorSchedule> {
 export async function getDoctorSlots(id: string, date: string): Promise<string[]> {
   if (env.useMock) return mockDelay(mockSlots(date), 600);
   const res = await api.get(endpoints.doctorSlots(id), { params: { date } });
-  const body = res.data?.data ?? res.data;
-  return (body?.slots ?? []).map(String);
+  const body = res.data ?? res.data;
+  return (body?.slots.slots ?? []).map(String);
 }
 
 // ---------------- mock mode helpers ----------------
