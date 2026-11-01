@@ -83,6 +83,7 @@ export async function createOrder(input: OrderInput): Promise<string> {
     return "26b879d4-0000-4000-8000-000000000000";
   }
 
+<<<<<<< HEAD
   let idempotencyKey = sessionStorage.getItem(KEY_STORAGE);
   if (!idempotencyKey) {
     idempotencyKey = crypto.randomUUID();
@@ -90,6 +91,9 @@ export async function createOrder(input: OrderInput): Promise<string> {
   }
 
   const res = await api.post(endpoints.orders, { ...input, idempotencyKey });
+=======
+  const res = await api.post(endpoints.orders, input);
+>>>>>>> 1fcc8f28497893dcb0b43f3bebc552ed7c876bdf
   const body = res.data?.data ?? res.data;
   const orderId = String(
     body?.orderId ?? body?.order?.id ?? body?.id ?? (typeof body === "string" ? body : "")
