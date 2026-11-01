@@ -85,6 +85,7 @@ export type OrderInput = {
   cart: { productId: string; quantity: number }[];
   shippingAddress: ShippingAddress;
   paymentMethod: string;
+  idempotencyKey?: string;
 };
 
 export type Review = {

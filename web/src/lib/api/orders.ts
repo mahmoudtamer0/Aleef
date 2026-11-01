@@ -5,7 +5,6 @@ import { mockDelay } from "@/lib/mock";
 import { mockOrders } from "@/lib/mockAccount";
 import type { Order, OrderItem } from "@/types";
 
-// Columns of the `order_items` table: product, title, price, image, quantity, total_price.
 const toOrderItem = (raw: any, index: number): OrderItem => ({
   id: String(raw?.id ?? index),
   productId: raw?.product != null ? String(raw.product) : undefined,
@@ -16,8 +15,7 @@ const toOrderItem = (raw: any, index: number): OrderItem => ({
   total: Number(raw?.total_price ?? raw?.totalPrice ?? Number(raw?.price ?? 0) * Number(raw?.quantity ?? 1)),
 });
 
-// Columns of the `orders` table: shipping_address, shipping_city, shipping_phone, "paymentMethod", "subTotal", delivery, "taxPayed", "totalOrder", status, "createdAt".
-// TODO: the list may or may not include the items: tell me and I will adjust.
+
 const toOrder = (raw: any): Order => {
   const items: OrderItem[] = (raw?.items ?? raw?.orderItems ?? raw?.order_items ?? []).map(toOrderItem);
   return {

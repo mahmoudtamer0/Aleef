@@ -75,14 +75,26 @@ export async function calculateCart(cart: { productId: string; quantity: number 
   };
 }
 
-// ---------------- place the order; resolves with the order id ----------------
 export async function createOrder(input: OrderInput): Promise<string> {
+  const KEY_STORAGE = "orderIdempotencyKey";
+
   if (env.useMock) {
     await mockDelay(null, 1100);
     return "26b879d4-0000-4000-8000-000000000000";
   }
 
-  const res = await api.post(endpoints.orders, input);
+  let idempotencyKey = sessionStorage.getItem(KEY_STORAGE);
+  if (!idempotencyKey) {
+    idempotencyKey = crypto.randomUUID();
+    sessionStorage.setItem(KEY_STORAGE, idempotencyKey);
+  }
+
+  const res = await api.post(endpoints.orders, { ...input, idempotencyKey });
   const body = res.data?.data ?? res.data;
-  return String(body?.orderId ?? body?.order?.id ?? body?.id ?? (typeof body === "string" ? body : ""));
+  const orderId = String(
+    body?.orderId ?? body?.order?.id ?? body?.id ?? (typeof body === "string" ? body : "")
+  );
+
+  sessionStorage.removeItem(KEY_STORAGE);
+  return orderId;
 }

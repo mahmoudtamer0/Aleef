@@ -3,11 +3,45 @@ import { sendEmail } from "../../../utils/sendEmail";
 import pool from "../../../db";
 import { clearCache, getCache, setCache } from "../../../cache";
 
-export const createOrder = async (cart: any, shippingAddress: any, paymentMethod: string, user: any) => {
+export const createOrder = async (
+    cart: any,
+    shippingAddress: any,
+    paymentMethod: string,
+    user: any,
+    idempotencyKey?: string
+) => {
+    for (const item of cart) {
+        if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
+            throw new ApiError(400, "invalid quantity");
+        }
+    }
 
     const client = await pool.connect();
     try {
+        if (idempotencyKey) {
+            const existing = await client.query(
+                `SELECT id FROM orders WHERE user_id = $1 AND idempotency_key = $2`,
+                [user.id, idempotencyKey]
+            );
+            if (existing.rowCount) return existing.rows[0].id;
+        }
+
         await client.query("BEGIN");
+
+        if (idempotencyKey) {
+            await client.query(
+                `SELECT pg_advisory_xact_lock(hashtext($1))`,
+                [`${user.id}:${idempotencyKey}`]
+            );
+            const existing = await client.query(
+                `SELECT id FROM orders WHERE user_id = $1 AND idempotency_key = $2`,
+                [user.id, idempotencyKey]
+            );
+            if (existing.rowCount) {
+                await client.query("COMMIT");
+                return existing.rows[0].id;
+            }
+        }
 
         let subTotal = 0;
         let delivery = 20;
@@ -17,8 +51,8 @@ export const createOrder = async (cart: any, shippingAddress: any, paymentMethod
 
         const getProducts = await client.query(
             `SELECT id, "finalPrice", title, thumbnail_url, stock
-        FROM products
-        WHERE id = ANY($1::uuid[])`,
+            FROM products
+            WHERE id = ANY($1::uuid[])`,
             [productIds]
         );
 
@@ -29,7 +63,7 @@ export const createOrder = async (cart: any, shippingAddress: any, paymentMethod
         );
 
         for (let i = 0; i < cart.length; i++) {
-            const item = cart[i]
+            const item = cart[i];
             const product = productsMap.get(item.productId);
             if (!product) {
                 throw new ApiError(404, "not found");
@@ -44,23 +78,35 @@ export const createOrder = async (cart: any, shippingAddress: any, paymentMethod
             );
 
             if (stockCheck.rowCount === 0) {
-                throw new ApiError(400, `stock available for ${product.title} is : ${product.stock}`,)
+                throw new ApiError(400, `stock available for ${product.title} is : ${product.stock}`);
             }
 
             subTotal += item.quantity * product.finalPrice;
         }
 
+        const taxAmount = Math.floor(subTotal * tax);
+        const totalOrder = subTotal + delivery + taxAmount;
+
         const order = await client.query(
-            `INSERT INTO orders (user_id, shipping_address, shipping_city, shipping_phone, "paymentMethod", "subTotal", delivery, "taxPayed", "totalOrder")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        RETURNING id`,
-            [user.id, shippingAddress.address, shippingAddress.city, shippingAddress.phone, paymentMethod, subTotal, delivery, Math.floor(subTotal * tax), subTotal + delivery + Math.floor(subTotal * tax)]
+            `INSERT INTO orders (user_id, shipping_address, shipping_city, shipping_phone, "paymentMethod", "subTotal", delivery, "taxPayed", "totalOrder", idempotency_key)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            ON CONFLICT (user_id, idempotency_key) DO NOTHING
+            RETURNING id`,
+            [user.id, shippingAddress.address, shippingAddress.city, shippingAddress.phone, paymentMethod, subTotal, delivery, taxAmount, totalOrder, idempotencyKey]
         );
+
+        if (order.rowCount === 0) {
+            await client.query("ROLLBACK");
+            const existing = await client.query(
+                `SELECT id FROM orders WHERE user_id = $1 AND idempotency_key = $2`,
+                [user.id, idempotencyKey]
+            );
+            return existing.rows[0].id;
+        }
 
         const orderId = order.rows[0].id;
 
         for (const item of cart) {
-
             const product = productsMap.get(item.productId);
 
             if (!product) {
@@ -69,11 +115,10 @@ export const createOrder = async (cart: any, shippingAddress: any, paymentMethod
 
             await client.query(
                 `INSERT INTO order_items ("order", product, title, price, image, quantity, total_price)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+                VALUES ($1, $2, $3, $4, $5, $6, $7)`,
                 [orderId, product.id, product.title, product.finalPrice, product.thumbnail_url, item.quantity, item.quantity * product.finalPrice]
             );
         }
-
 
         await client.query("COMMIT");
         clearCache(`upcomingOrders:${user.id}`);
@@ -107,10 +152,10 @@ export const createOrder = async (cart: any, shippingAddress: any, paymentMethod
 
         <p><strong>Subtotal:</strong> ${subTotal} EGP</p>
         <p><strong>Delivery:</strong> ${delivery} EGP</p>
-        <p><strong>Tax:</strong> ${Math.floor(subTotal * tax)} EGP</p>
+        <p><strong>Tax:</strong> ${taxAmount} EGP</p>
 
         <h2 style="color: #333;">
-            Total: ${subTotal + delivery + Math.floor(subTotal * tax)} EGP
+            Total: ${totalOrder} EGP
         </h2>
 
         <hr style="margin: 20px 0;" />
@@ -143,8 +188,6 @@ export const createOrder = async (cart: any, shippingAddress: any, paymentMethod
             });
         });
 
-
-
         return orderId;
     } catch (err) {
         await client.query("ROLLBACK");
@@ -152,7 +195,7 @@ export const createOrder = async (cart: any, shippingAddress: any, paymentMethod
     } finally {
         client.release();
     }
-}
+};
 
 
 export const getMyUpcomingOrders = async (user: any) => {
