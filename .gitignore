@@ -5,6 +5,7 @@ node_modules/
 # Environment variables and secrets
 !.env.example
 !.env.sample
+.env
 
 # Build outputs
 dist/
