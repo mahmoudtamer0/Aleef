@@ -12,6 +12,7 @@ import ordersRouter from "./modules/Shop/Order/order.router";
 import petsRouter from "./modules/Pet/pet.router";
 import appointmentsRouter from "./modules/Appointments/appointment.router";
 import chatRouter from "./modules/Chat/chat.router";
+import trackRouter from "./modules/track/track.router";
 import globalErrorHandler from "./middlewares/error";
 import { vaccinationReminder } from "./jobs/vaccinationReminder.job";
 
@@ -58,7 +59,7 @@ app.use('/api/v1/orders', apiLimiter, ordersRouter);
 app.use('/api/v1/pets', apiLimiter, petsRouter);
 app.use('/api/v1/appointments', apiLimiter, appointmentsRouter);
 app.use('/api/v1/chats', apiLimiter, chatRouter);
-
+app.use('/api/v1/track', apiLimiter, trackRouter);
 app.use('/api/v1', (req, res) => {
     res.status(404).json({ status: "fail", message: "Route not found" });
 });
