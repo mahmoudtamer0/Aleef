@@ -26,7 +26,13 @@ const clip = (v: unknown, max: number): string | null =>
 
 function clientInfo(req: Request) {
   const ua = String(req.headers['user-agent'] ?? '');
-  const ip = (req.ip ?? '').replace('::ffff:', '');
+
+  // behind Render's proxy req.ip is internal, so read the real IP from the headers
+  const fwd = String(req.headers['cf-connecting-ip'] ?? req.headers['x-forwarded-for'] ?? '')
+    .split(',')[0]
+    ?.trim();
+  const ip = (fwd || req.ip || '').replace('::ffff:', '');
+
   const geo = ip ? geoip.lookup(ip) : null;
   const parsed = new UAParser(ua).getResult();
 
