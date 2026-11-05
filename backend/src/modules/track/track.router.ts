@@ -50,6 +50,7 @@ function hostOf(url: string | null): string | null {
   }
 }
 
+/* ---------------------------- POST /pageview ---------------------------- */
 
 router.post('/pageview', async (req: Request, res: Response): Promise<void> => {
   const b = req.body ?? {};
@@ -151,7 +152,6 @@ router.post('/event', async (req: Request, res: Response): Promise<void> => {
     }
   }
 
-<<<<<<< HEAD
   try {
     await pool.query(
       `INSERT INTO track_events (session_id, visitor_id, name, path, metadata)
@@ -162,17 +162,6 @@ router.post('/event', async (req: Request, res: Response): Promise<void> => {
   } catch (err) {
     console.error('[track] event failed:', err);
   }
-=======
-
-
-// function requireAdmin(
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ): void {
-//   const key = process.env['TRACKING_ADMIN_KEY'] ?? '';
-//   const sent = String(req.headers['x-admin-key'] ?? '');
->>>>>>> 1e7723a2f3b298bc55ab24f0d8723d2c4b7f1977
 
   res.sendStatus(204);
 });
