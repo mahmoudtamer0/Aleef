@@ -14,7 +14,7 @@ export function BestDoctors() {
 
   return (
     <section className="reveal">
-      <SectionHeader title="Best doctors" href={routes.doctors} />
+      <SectionHeader title="Best doctors" href={routes.appointments} />
       {isError ? (
         <ErrorState message="We couldn't load doctors." onRetry={() => refetch()} />
       ) : !isLoading && data?.length === 0 ? (

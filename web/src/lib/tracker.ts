@@ -1,32 +1,37 @@
-
 // src/lib/tracker.ts
 
-const API =process.env.NEXT_PUBLIC_API_URL ;
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 const VISITOR_KEY = 'aleef_vid';
 const SESSION_KEY = 'aleef_sid';
 
-function getId(key: string): string {
+// visitor id: lives in localStorage, so it's the same person across visits
+function getVisitorId(): string {
   try {
-    let id = localStorage.getItem(key);
-
+    let id = localStorage.getItem(VISITOR_KEY);
     if (!id) {
       id = crypto.randomUUID();
-      localStorage.setItem(key, id);
+      localStorage.setItem(VISITOR_KEY, id);
     }
-
     return id;
   } catch {
     return crypto.randomUUID();
   }
 }
 
-function getVisitorId(): string {
-  return getId(VISITOR_KEY);
-}
-
+// session id: sessionStorage, so every new visit (new tab / browser reopened) is a new session.
+// (with localStorage it never changed, so "Visits" would stay 1 forever)
 function getSessionId(): string {
-  return getId(SESSION_KEY);
+  try {
+    let id = sessionStorage.getItem(SESSION_KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      sessionStorage.setItem(SESSION_KEY, id);
+    }
+    return id;
+  } catch {
+    return crypto.randomUUID();
+  }
 }
 
 function getUTM() {
@@ -39,27 +44,40 @@ function getUTM() {
   };
 }
 
+function post(path: string, body: unknown) {
+  fetch(`${API}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    keepalive: true,
+  }).catch(() => {});
+}
+
 export function track(path: string = location.pathname) {
   if (!API || typeof window === 'undefined') return;
 
-  const visitorId = getVisitorId();
-  const sessionId = getSessionId();
+  post('/track/pageview', {
+    visitorId: getVisitorId(),
+    sessionId: getSessionId(),
+    path,
+    title: document.title,
+    referrer: document.referrer,
+    screen: `${screen.width}x${screen.height}`,
+    language: navigator.language,
+    utm: getUTM(),
+  });
+}
 
-  fetch(`${API}/track/pageview`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      visitorId,
-      sessionId,
-      path,
-      title: document.title,
-      referrer: document.referrer,
-      screenWidth: screen.width,
-      language: navigator.language,
-      utm: getUTM(),
-    }),
-    keepalive: true,
-  }).catch(() => {});
+// custom actions, e.g. trackEvent('create_account_click')
+// name: lowercase letters, numbers and _ only
+export function trackEvent(name: string, metadata?: Record<string, unknown>) {
+  if (!API || typeof window === 'undefined') return;
+
+  post('/track/event', {
+    visitorId: getVisitorId(),
+    sessionId: getSessionId(),
+    name,
+    path: location.pathname,
+    metadata,
+  });
 }
