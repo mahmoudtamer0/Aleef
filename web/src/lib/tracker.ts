@@ -38,7 +38,7 @@ function getUTM() {
   const params = new URLSearchParams(location.search);
 
   return {
-    source: params.get('utm_source'),
+    source: params.get('utm_source') ?? params.get('ref'),
     medium: params.get('utm_medium'),
     campaign: params.get('utm_campaign'),
   };
