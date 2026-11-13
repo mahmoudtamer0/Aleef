@@ -1,11 +1,8 @@
-// src/lib/tracker.ts
-
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 const VISITOR_KEY = 'aleef_vid';
 const SESSION_KEY = 'aleef_sid';
 
-// visitor id: lives in localStorage, so it's the same person across visits
 function getVisitorId(): string {
   try {
     let id = localStorage.getItem(VISITOR_KEY);
@@ -19,8 +16,6 @@ function getVisitorId(): string {
   }
 }
 
-// session id: sessionStorage, so every new visit (new tab / browser reopened) is a new session.
-// (with localStorage it never changed, so "Visits" would stay 1 forever)
 function getSessionId(): string {
   try {
     let id = sessionStorage.getItem(SESSION_KEY);
@@ -53,25 +48,54 @@ function post(path: string, body: unknown) {
   }).catch(() => {});
 }
 
+
+const HUMAN_EVENTS = ['pointermove', 'scroll', 'keydown', 'touchstart', 'click'];
+let human = false;
+let listening = false;
+const queue: Array<() => void> = [];
+
+function markHuman() {
+  if (human) return;
+  human = true;
+  HUMAN_EVENTS.forEach((e) => window.removeEventListener(e, markHuman));
+  queue.splice(0).forEach((fn) => fn());
+}
+
+function whenHuman(fn: () => void) {
+  if (human) {
+    fn();
+    return;
+  }
+  queue.push(fn);
+  if (!listening) {
+    listening = true;
+    HUMAN_EVENTS.forEach((e) => window.addEventListener(e, markHuman, { passive: true }));
+  }
+}
+
 export function track(path: string = location.pathname) {
   if (!API || typeof window === 'undefined') return;
+  if (navigator.webdriver) return;
 
-  post('/track/pageview', {
-    visitorId: getVisitorId(),
-    sessionId: getSessionId(),
+  const data = {
     path,
     title: document.title,
     referrer: document.referrer,
     screen: `${screen.width}x${screen.height}`,
     language: navigator.language,
     utm: getUTM(),
-  });
+  };
+
+  whenHuman(() =>
+    post('/track/pageview', { visitorId: getVisitorId(), sessionId: getSessionId(), ...data }),
+  );
 }
 
-// custom actions, e.g. trackEvent('create_account_click')
-// name: lowercase letters, numbers and _ only
 export function trackEvent(name: string, metadata?: Record<string, unknown>) {
   if (!API || typeof window === 'undefined') return;
+  if (navigator.webdriver) return;
+
+  markHuman();
 
   post('/track/event', {
     visitorId: getVisitorId(),
