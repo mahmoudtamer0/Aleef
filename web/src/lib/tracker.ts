@@ -1,7 +1,10 @@
+// src/lib/tracker.ts
+
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 const VISITOR_KEY = 'aleef_vid';
 const SESSION_KEY = 'aleef_sid';
+const MIN_DWELL_MS = 3000; 
 
 function getVisitorId(): string {
   try {
@@ -49,16 +52,57 @@ function post(path: string, body: unknown) {
 }
 
 
+let automated: boolean | null = null;
+
+function looksAutomated(): boolean {
+  if (automated !== null) return automated;
+  automated = check();
+  return automated;
+}
+
+function check(): boolean {
+  const ua = navigator.userAgent;
+  const platform = navigator.platform || '';
+
+  if (navigator.webdriver) return true;
+  if (/HeadlessChrome|PhantomJS|Lighthouse/i.test(ua)) return true;
+
+  if (/Macintosh/.test(ua) && !/Mac/.test(platform)) return true;
+  if (/Windows NT/.test(ua) && !/Win/.test(platform)) return true;
+
+  try {
+    const gl = document.createElement('canvas').getContext('webgl');
+    const ext = gl?.getExtension('WEBGL_debug_renderer_info');
+    if (gl && ext) {
+      const renderer = String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL));
+      if (/SwiftShader|llvmpipe/i.test(renderer)) return true;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  return false;
+}
+
+
 const HUMAN_EVENTS = ['pointermove', 'scroll', 'keydown', 'touchstart', 'click'];
+const loadedAt = typeof window === 'undefined' ? 0 : Date.now();
 let human = false;
 let listening = false;
 const queue: Array<() => void> = [];
 
-function markHuman() {
+function release() {
   if (human) return;
   human = true;
-  HUMAN_EVENTS.forEach((e) => window.removeEventListener(e, markHuman));
-  queue.splice(0).forEach((fn) => fn());
+  HUMAN_EVENTS.forEach((e) => window.removeEventListener(e, onInteract));
+
+  const wait = Math.max(0, MIN_DWELL_MS - (Date.now() - loadedAt));
+  setTimeout(() => queue.splice(0).forEach((fn) => fn()), wait); 
+}
+
+function onInteract(e: Event) {
+  if (!e.isTrusted) return; 
+  release();
 }
 
 function whenHuman(fn: () => void) {
@@ -69,13 +113,14 @@ function whenHuman(fn: () => void) {
   queue.push(fn);
   if (!listening) {
     listening = true;
-    HUMAN_EVENTS.forEach((e) => window.addEventListener(e, markHuman, { passive: true }));
+    HUMAN_EVENTS.forEach((e) => window.addEventListener(e, onInteract, { passive: true }));
   }
 }
 
+
 export function track(path: string = location.pathname) {
   if (!API || typeof window === 'undefined') return;
-  if (navigator.webdriver) return;
+  if (looksAutomated()) return;
 
   const data = {
     path,
@@ -93,15 +138,17 @@ export function track(path: string = location.pathname) {
 
 export function trackEvent(name: string, metadata?: Record<string, unknown>) {
   if (!API || typeof window === 'undefined') return;
-  if (navigator.webdriver) return;
+  if (looksAutomated()) return;
 
-  markHuman();
+  release();
 
-  post('/track/event', {
-    visitorId: getVisitorId(),
-    sessionId: getSessionId(),
-    name,
-    path: location.pathname,
-    metadata,
-  });
+  whenHuman(() =>
+    post('/track/event', {
+      visitorId: getVisitorId(),
+      sessionId: getSessionId(),
+      name,
+      path: location.pathname,
+      metadata,
+    }),
+  );
 }
